@@ -1,0 +1,200 @@
+﻿@model WebPetThucTap.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Hệ thống Quản trị";
+    var currentRole = (WebPetThucTap.Models.UserRole)ViewBag.CurrentUserRole;
+    var expConfig = ViewBag.ExpConfig as WebPetThucTap.Models.ExpConfig;
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-white fw-bold border-bottom border-secondary pb-3">
+                <i class="bi bi-shield-lock-fill text-danger me-2"></i> Bảng Điều Khiển Hệ Thống
+                <span class="badge bg-danger fs-6 rounded-pill float-end mt-2">@currentRole.ToString() Mode</span>
+            </h2>
+        </div>
+    </div>
+
+    <!-- Thanh chuyển đổi danh mục quản lý -->
+    <ul class="nav nav-pills mb-4 bg-dark p-2 rounded border border-secondary" id="adminTabs" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active fw-bold text-light" id="approve-tab" data-bs-toggle="tab" data-bs-target="#approve-content" type="button"><i class="bi bi-patch-check me-2"></i> Phê Duyệt Topic (@Model.PendingTopics.Count)</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link fw-bold text-light" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-content" type="button"><i class="bi bi-people me-2"></i> Quản Lý Thành Viên</button>
+        </li>
+        @if (currentRole == WebPetThucTap.Models.UserRole.Dev)
+        {
+            <li class="nav-item">
+                <button class="nav-link fw-bold text-warning" id="exp-tab" data-bs-toggle="tab" data-bs-target="#exp-content" type="button"><i class="bi bi-cpu me-2"></i> Cấu Hình Thuật Toán EXP (Chỉ DEV)</button>
+            </li>
+        }
+    </ul>
+
+    <div class="tab-content" id="adminTabsContent">
+        <!-- TAB 1: DANH SÁCH BÀI CHỜ DUYỆT / ĐÃ DUYỆT -->
+        <div class="tab-pane fade show active" id="approve-content" role="tabpanel">
+            <div class="card bg-dark border-secondary shadow mb-4">
+                <div class="card-header bg-black text-warning fw-bold border-bottom border-secondary">🔥 Đơn bài viết chờ phê duyệt</div>
+                <div class="card-body">
+                    @if (!Model.PendingTopics.Any())
+                    {
+                        <p class="text-muted text-center my-3">Sạch sẽ! Không có bài viết nào đang xếp hàng chờ duyệt.</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover align-middle">
+                                <thead>
+                                    <tr class="text-info border-secondary">
+                                        <th>Người gửi</th>
+                                        <th>Tiêu đề</th>
+                                        <th>Thời gian</th>
+                                        <th class="text-end">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var t in Model.PendingTopics)
+                                    {
+                                        <tr class="border-secondary">
+                                            <td><strong>@t.AuthorName</strong><br><small class="text-muted">@t.AuthorEmail</small></td>
+                                            <td><span class="fw-bold">@t.Title</span><br><small class="text-muted text-truncate d-inline-block" style="max-width:400px">@t.Content</small></td>
+                                            <td>@t.CreatedAt.ToString("HH:mm dd/MM/yyyy")</td>
+                                            <td class="text-end">
+                                                <div class="d-flex gap-2 justify-content-end">
+                                                    <form asp-action="ApproveTopic" method="post">
+                                                        <input type="hidden" name="id" value="@t.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-success fw-bold">Duyệt bài</button>
+                                                    </form>
+                                                    <form asp-action="DeleteTopic" method="post" onsubmit="return confirm('Xóa bài gửi duyệt này?')">
+                                                        <input type="hidden" name="id" value="@t.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Xóa bỏ</button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: QUẢN LÝ THÀNH VIÊN VÀ LỆNH BAN / PHÂN QUYỀN -->
+        <div class="tab-pane fade" id="users-content" role="tabpanel">
+            <div class="card bg-dark border-secondary shadow">
+                <div class="card-header bg-black text-info fw-bold border-bottom border-secondary">👥 Cơ sở dữ liệu tài khoản</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle">
+                            <thead>
+                                <tr class="text-muted border-secondary">
+                                    <th>Thành viên</th>
+                                    <th>Chức vụ</th>
+                                    <th>Tổng EXP Tích Lũy</th>
+                                    <th>Trạng thái tương tác</th>
+                                    <th class="text-end">Hành động quyền lực</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var u in Model.Users)
+                                {
+                                    <tr class="border-secondary">
+                                        <td><strong>@u.Name</strong><br><small class="text-muted">@u.Email</small></td>
+                                        <td>
+                                            @if (u.Role == WebPetThucTap.Models.UserRole.Dev)
+                                            {
+                                                <span class="badge bg-danger text-white">Developer</span>
+                                            }
+                                            else if (u.Role == WebPetThucTap.Models.UserRole.Admin)
+                                            {
+
+                                                <span class="badge bg-success text-dark fw-bold">Admin</span>
+                                            }
+                                            else
+                                            {
+
+                                                <span class="badge bg-secondary">User</span>
+                                            }
+                                        </td>
+                                        <td><span class="text-warning fw-bold">@u.TotalExp</span> EXP</td>
+                                        <td>
+                                            @if (u.BannedUntil.HasValue && u.BannedUntil.Value > DateTime.Now)
+                                            {
+                                                <span class="text-danger fw-bold small"><i class="bi bi-lock-fill"></i> Đang bị BAN đến:<br>@u.BannedUntil.Value.ToString("dd/MM HH:mm")</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-success small"><i class="bi bi-check-circle-fill"></i> Bình thường</span>
+                                            }
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="d-flex gap-2 justify-content-end">
+                                                @if (u.BannedUntil.HasValue && u.BannedUntil.Value > DateTime.Now)
+                                                {
+                                                    <form asp-action="UnbanUser" method="post">
+                                                        <input type="hidden" name="email" value="@u.Email" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-success">Gỡ Ban</button>
+                                                    </form>
+                                                }
+
+                                                <!-- ẨN HOÀN TOÀN: Các nút phân quyền nâng cao này chỉ hiển thị với DEV -->
+                                                @if (currentRole == WebPetThucTap.Models.UserRole.Dev && u.Role != WebPetThucTap.Models.UserRole.Dev)
+                                                {
+                                                    @if (u.Role == WebPetThucTap.Models.UserRole.User)
+                                                    {
+                                                        <a class="btn btn-sm btn-info text-dark fw-bold" asp-action="PromoteToAdmin" asp-route-email="@u.Email"><i class="bi bi-arrow-up"></i> Lên Admin</a>
+                                                    }
+                                                    else if (u.Role == WebPetThucTap.Models.UserRole.Admin)
+                                                    {
+                                                        <a class="btn btn-sm btn-outline-warning" asp-action="DemoteToUser" asp-route-email="@u.Email"><i class="bi bi-arrow-down"></i> Hạ cấp User</a>
+                                                    }
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: THAY ĐỔI CẤU HÌNH EXP (CHỈ HIỂN THỊ VỚI DEV) -->
+        @if (currentRole == WebPetThucTap.Models.UserRole.Dev && expConfig != null)
+        {
+            <div class="tab-pane fade" id="exp-content" role="tabpanel">
+                <div class="card bg-dark border-secondary shadow">
+                    <div class="card-header bg-black text-warning fw-bold border-bottom border-secondary">🛠️ Tinh chỉnh hằng số và danh hiệu cấp bậc</div>
+                    <form asp-action="UpdateExpConfig" method="post" class="card-body p-4">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label text-white fw-bold">EXP cần để đạt Cấp 1</label>
+                                <input type="number" name="BaseExpNeeded" class="form-control bg-black text-white border-secondary" value="@expConfig.BaseExpNeeded" required />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label text-white fw-bold">Hệ số nhân cấp sau (Multiplier)</label>
+                                <input type="number" step="0.1" name="Multiplier" class="form-control bg-black text-white border-secondary" value="@expConfig.Multiplier.ToString(System.Globalization.CultureInfo.InvariantCulture)" required />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label text-white fw-bold">Số cấp tăng 1 Danh Hiệu</label>
+                                <input type="number" name="LevelsPerTitle" class="form-control bg-black text-white border-secondary" value="@expConfig.LevelsPerTitle" required />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-white fw-bold">Chuỗi danh hiệu hệ thống (Phân tách bằng dấu phẩy `,` )</label>
+                            <textarea name="TitlesString" class="form-control bg-black text-white border-secondary" rows="3" required>@expConfig.TitlesString</textarea>
+                            <small class="text-muted">Hệ thống sẽ tự tính toán: Cấp 1-10 là Danh hiệu 1, Cấp 11-20 là Danh hiệu 2...</small>
+                        </div>
+                        <div class="text-end mt-3">
+                            <button type="submit" class="btn btn-warning text-dark fw-bold px-4">Áp Dụng Thay Đổi Thuật Toán</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Trang Chủ";
+}
+
+<div class="text-center mt-5">
+    <h1 class="display-4 fw-bold text-info">Người Bạn Đồng Hành Trên Màn Hình!</h1>
+    <p class="lead text-light mt-3">Nuôi Pet ảo thông minh tích hợp AI, giúp bạn xả stress và quản lý thời gian hiệu quả.</p>
+    <div class="container mt-5">
+        <h2 class="text-info fw-bold border-bottom border-secondary pb-2">Specs & Ecosystem</h2>
+        <div class="mt-4 bg-dark p-4 rounded border border-secondary shadow-sm">
+            <h4 class="text-white">System Requirements</h4>
+            <ul class="text-secondary mt-2">
+                <li><strong>OS:</strong> Windows 10/11 or macOS 12+</li>
+                <li><strong>RAM:</strong> 4GB Minimum (The app only consumes ~50MB RAM thanks to Tauri framework)</li>
+                <li><strong>Storage:</strong> 100MB of free space</li>
+            </ul>
+
+            <h4 class="text-white mt-4">AWS Cloud Synchronization</h4>
+            <p class="text-secondary">
+                Your Pet is safely backed up. By utilizing a Serverless architecture (Amazon API Gateway & DynamoDB), your Pet's state (Level, Happiness, Name) is securely synced to the cloud, ensuring you never lose your progress even if you change your PC.
+            </p>
+        </div>
+    </div>
+    <div class="mt-4">
+        <a asp-controller="Home" asp-action="DownloadApp" class="btn btn-success btn-lg px-5 rounded-pill shadow">
+            Tải Về Ngay (Windows)
+        </a>
+    </div>
+
+    <div class="mt-5">
+        <div class="p-5 bg-dark rounded-3 shadow-sm border border-secondary" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
+            <span class="text-secondary">[Ảnh hoặc GIF mô tả Pet của bạn đang đi dạo trên màn hình sẽ đặt ở đây]</span>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5 pt-4">
+    <div class="col-md-4 text-center mb-4">
+        <h3 class="fw-bold text-white">Tương Tác Thú Vị</h3>
+        <p class="text-secondary">Dùng chuột nhấc, ném, vuốt ve Pet ngay trên Taskbar hoặc bất kỳ cửa sổ nào.</p>
+    </div>
+    <div class="col-md-4 text-center mb-4">
+        <h3 class="fw-bold text-white">Trợ Lý AI</h3>
+        <p class="text-secondary">Trò chuyện trực tiếp với Pet để giải đáp thắc mắc nhờ tích hợp AI thế hệ mới.</p>
+    </div>
+    <div class="col-md-4 text-center mb-4">
+        <h3 class="fw-bold text-white">Bảo Vệ Sức Khỏe</h3>
+        <p class="text-secondary">Nhắc nhở bạn uống nước, ngồi thẳng lưng và nghỉ ngơi sau thời gian dài làm việc.</p>
+    </div>
+</div>
