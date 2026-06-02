@@ -79,7 +79,7 @@ namespace WebPetThucTap.Controllers
         {
             await LoadUserLayoutDataAsync();
 
-            var currentUserEmail = User.Identity.IsAuthenticated ? User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Email)?.Value : "";
+            var currentUserEmail = User.Identity?.IsAuthenticated == true ? User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Email)?.Value : "";
             var account = await _context.UserAccounts.FindAsync(currentUserEmail);
             var role = account?.Role ?? UserRole.User;
             ViewBag.CurrentUserRole = role;
@@ -95,7 +95,7 @@ namespace WebPetThucTap.Controllers
             ViewBag.ActiveTopic = activeTopic;
 
             // Trạng thái Like của người dùng hiện tại (để tô đỏ nút Like)
-            var likedElements = User.Identity.IsAuthenticated
+            var likedElements = User.Identity?.IsAuthenticated == true
                 ? await _context.LikeLogs.Where(l => l.UserEmail == currentUserEmail).Select(l => l.CommentId.HasValue ? l.CommentId.Value : -l.TopicId!.Value).ToListAsync()
                 : new List<int>();
             ViewBag.LikedElements = likedElements;
@@ -295,12 +295,14 @@ namespace WebPetThucTap.Controllers
 
             if (comment != null && comment.AuthorEmail == email && !string.IsNullOrEmpty(newContent))
             {
-                _context.CommentHistories.Add(new CommentHistory
+#pragma warning disable CS8601 // Possible null reference assignment.
+                _ = _context.CommentHistories.Add(new CommentHistory
                 {
                     CommentId = comment.Id,
                     OldContent = comment.Content,
                     EditedAt = DateTime.Now
                 });
+#pragma warning restore CS8601 // Possible null reference assignment.
 
                 comment.Content = newContent;
                 comment.IsEdited = true;

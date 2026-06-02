@@ -1,50 +1,218 @@
 ﻿@{
-    ViewData["Title"] = "Trang Chủ";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center mt-5">
-    <h1 class="display-4 fw-bold text-info">Người Bạn Đồng Hành Trên Màn Hình!</h1>
-    <p class="lead text-light mt-3">Nuôi Pet ảo thông minh tích hợp AI, giúp bạn xả stress và quản lý thời gian hiệu quả.</p>
-    <div class="container mt-5">
-        <h2 class="text-info fw-bold border-bottom border-secondary pb-2">Specs & Ecosystem</h2>
-        <div class="mt-4 bg-dark p-4 rounded border border-secondary shadow-sm">
-            <h4 class="text-white">System Requirements</h4>
-            <ul class="text-secondary mt-2">
-                <li><strong>OS:</strong> Windows 10/11 or macOS 12+</li>
-                <li><strong>RAM:</strong> 4GB Minimum (The app only consumes ~50MB RAM thanks to Tauri framework)</li>
-                <li><strong>Storage:</strong> 100MB of free space</li>
-            </ul>
-
-            <h4 class="text-white mt-4">AWS Cloud Synchronization</h4>
-            <p class="text-secondary">
-                Your Pet is safely backed up. By utilizing a Serverless architecture (Amazon API Gateway & DynamoDB), your Pet's state (Level, Happiness, Name) is securely synced to the cloud, ensuring you never lose your progress even if you change your PC.
-            </p>
+<div class="home-page">
+    <!-- Hero Section -->
+    <div class="hero-section text-center py-5 mb-4">
+        <div class="hero-badge d-inline-block mb-3">
+            <span class="badge bg-primary bg-opacity-25 text-primary px-3 py-2 rounded-pill">
+                <i class="bi bi-star-fill me-1"></i> Pet AI 2026
+            </span>
+        </div>
+        <h1 class="display-3 fw-bold mb-3 hero-title">
+            <span class="gradient-text">Your Companion</span><br>
+            <span class="text-light">On Screen!</span>
+        </h1>
+        <p class="lead text-muted mx-auto" style="max-width: 600px;">
+            Raise a smart virtual pet integrated with AI, helping you relieve stress and manage time effectively.
+        </p>
+        <div class="mt-4">
+            <a asp-controller="Home" asp-action="DownloadApp" class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow-lg">
+                <i class="bi bi-download me-2"></i>Download Now (Windows)
+            </a>
         </div>
     </div>
-    <div class="mt-4">
-        <a asp-controller="Home" asp-action="DownloadApp" class="btn btn-success btn-lg px-5 rounded-pill shadow">
-            Tải Về Ngay (Windows)
-        </a>
+
+    <!-- Feature Cards -->
+    <div class="features-grid mb-5">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card h-100 text-center p-4 rounded-4">
+                    <div class="feature-icon mx-auto mb-3">
+                        <i class="bi bi-hand-index-thumb fs-1 text-info"></i>
+                    </div>
+                    <h3 class="fw-semibold text-white mb-2">Fun Interactions</h3>
+                    <p class="text-muted mb-0">Use your mouse to lift, throw, or pet your Pet directly on the Taskbar or any window.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card h-100 text-center p-4 rounded-4">
+                    <div class="feature-icon mx-auto mb-3">
+                        <i class="bi bi-robot fs-1 text-primary"></i>
+                    </div>
+                    <h3 class="fw-semibold text-white mb-2">AI Assistant</h3>
+                    <p class="text-muted mb-0">Chat directly with your Pet to get answers to your questions thanks to next-gen AI integration.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card h-100 text-center p-4 rounded-4">
+                    <div class="feature-icon mx-auto mb-3">
+                        <i class="bi bi-heart-pulse fs-1 text-danger"></i>
+                    </div>
+                    <h3 class="fw-semibold text-white mb-2">Health Protection</h3>
+                    <p class="text-muted mb-0">Reminds you to drink water, sit up straight, and take breaks after long work sessions.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="mt-5">
-        <div class="p-5 bg-dark rounded-3 shadow-sm border border-secondary" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
-            <span class="text-secondary">[Ảnh hoặc GIF mô tả Pet của bạn đang đi dạo trên màn hình sẽ đặt ở đây]</span>
+    <!-- System & AWS Section -->
+    <div class="system-section mb-5">
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="info-card h-100 p-4 rounded-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="info-icon">
+                            <i class="bi bi-pc-display fs-2 text-info"></i>
+                        </div>
+                        <h3 class="fw-semibold text-white mb-0">System Requirements</h3>
+                    </div>
+                    <ul class="spec-list list-unstyled mt-3">
+                        <li class="mb-2"><i class="bi bi-windows me-2 text-info"></i> <strong>OS:</strong> Windows 10/11 or macOS 12+</li>
+                        <li class="mb-2"><i class="bi bi-memory me-2 text-info"></i> <strong>RAM:</strong> 4GB Minimum <span class="text-muted">(App only uses ~50MB thanks to Tauri)</span></li>
+                        <li class="mb-2"><i class="bi bi-hdd-stack me-2 text-info"></i> <strong>Storage:</strong> 100MB of free space</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="info-card h-100 p-4 rounded-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="info-icon">
+                            <i class="bi bi-cloud-upload fs-2 text-primary"></i>
+                        </div>
+                        <h3 class="fw-semibold text-white mb-0">AWS Cloud Synchronization</h3>
+                    </div>
+                    <p class="text-muted mb-0">
+                        Your Pet is safely backed up. By utilizing a Serverless architecture 
+                        <span class="text-info">(Amazon API Gateway & DynamoDB)</span>, your Pet's state 
+                        (Level, Happiness, Name) is securely synced to the cloud, ensuring you never 
+                        lose your progress even if you change your PC.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Image / Placeholder -->
+    <div class="preview-section text-center mb-4">
+        <div class="preview-placeholder rounded-4 p-5">
+            <i class="bi bi-image fs-1 text-muted mb-3 d-block"></i>
+            <span class="text-muted">[Image or GIF showing your Pet walking on the screen will be placed here]</span>
         </div>
     </div>
 </div>
 
-<div class="row mt-5 pt-4">
-    <div class="col-md-4 text-center mb-4">
-        <h3 class="fw-bold text-white">Tương Tác Thú Vị</h3>
-        <p class="text-secondary">Dùng chuột nhấc, ném, vuốt ve Pet ngay trên Taskbar hoặc bất kỳ cửa sổ nào.</p>
-    </div>
-    <div class="col-md-4 text-center mb-4">
-        <h3 class="fw-bold text-white">Trợ Lý AI</h3>
-        <p class="text-secondary">Trò chuyện trực tiếp với Pet để giải đáp thắc mắc nhờ tích hợp AI thế hệ mới.</p>
-    </div>
-    <div class="col-md-4 text-center mb-4">
-        <h3 class="fw-bold text-white">Bảo Vệ Sức Khỏe</h3>
-        <p class="text-secondary">Nhắc nhở bạn uống nước, ngồi thẳng lưng và nghỉ ngơi sau thời gian dài làm việc.</p>
-    </div>
-</div>
+<style>
+    /* Home Page Custom Styles - Only Visual, No Logic Changes */
+    .home-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    /* Hero Section */
+    .hero-section {
+        position: relative;
+    }
+
+    /* Professional Font for Headline */
+    .hero-title {
+        font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+        letter-spacing: -0.02em;
+        font-weight: 800;
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, #0dcaf0, #0d6efd);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    /* Feature Cards */
+    .feature-card {
+        background: rgba(25, 25, 35, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(13, 202, 240, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .feature-icon {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(13, 202, 240, 0.1);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+        background: rgba(13, 202, 240, 0.2);
+        transform: scale(1.05);
+    }
+
+    /* Info Cards */
+    .info-card {
+        background: rgba(20, 20, 30, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        border-color: rgba(13, 202, 240, 0.2);
+    }
+
+    .info-icon {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(13, 202, 240, 0.1);
+        border-radius: 12px;
+    }
+
+    .spec-list li {
+        color: #adb5bd;
+        font-size: 0.95rem;
+    }
+
+    /* Preview Section */
+    .preview-placeholder {
+        background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
+        border: 1px dashed rgba(13, 202, 240, 0.3);
+        min-height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .preview-placeholder:hover {
+        border-color: rgba(13, 202, 240, 0.5);
+        background: linear-gradient(145deg, #1e1e35, #12121e);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .hero-section h1 {
+            font-size: 2rem;
+        }
+        .feature-card {
+            padding: 1.5rem !important;
+        }
+        .preview-placeholder {
+            min-height: 200px;
+        }
+    }
+</style>

@@ -2,55 +2,240 @@
     ViewData["Title"] = "Contact";
 }
 
-<div class="container mt-5">
-    <div class="text-center">
-        <h2 class="text-info fw-bold">Pet Owners Community</h2>
-        <p class="text-light">Join us to share your moments, provide feedback, or report bugs.</p>
+<div class="contact-page">
+    <!-- Header Section -->
+    <div class="contact-header text-center mb-5">
+        <div class="header-badge d-inline-block mb-3">
+            <span class="badge bg-info bg-opacity-25 text-info px-3 py-2 rounded-pill">
+                <i class="bi bi-people-fill me-1"></i> Get Involved
+            </span>
+        </div>
+        <h1 class="display-4 fw-bold mb-3">
+            <span class="gradient-text">Pet Owners Community</span>
+        </h1>
+        <p class="lead text-muted mx-auto" style="max-width: 550px;">
+            Join us to share your moments, provide feedback, or report bugs.
+        </p>
+        <div class="divider-glow mx-auto my-4"></div>
     </div>
 
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-6">
-            <div class="list-group shadow">
-
-                <a href="https://discord.gg/b49baujr" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action bg-dark text-light border-secondary d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="mb-1 fw-bold">Discord Channel</h5>
-                        <small class="text-secondary">Hang out, voice chat, and get early feature updates.</small>
+    <!-- Main Content Grid -->
+    <div class="row justify-content-center g-4">
+        <div class="col-lg-8">
+            <!-- Discord Card -->
+            <div class="contact-card discord-card mb-4 p-4 rounded-4">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="card-icon bg-primary bg-opacity-25 rounded-circle p-3">
+                            <i class="bi bi-discord fs-2 text-primary"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-semibold text-white mb-1">Discord Channel</h3>
+                            <p class="text-muted mb-0">Hang out, voice chat, and get early feature updates.</p>
+                        </div>
                     </div>
-                    <span class="badge bg-primary rounded-pill">Join Now</span>
-                </a>
-
-                <a href="#" class="list-group-item list-group-item-action bg-dark text-light border-secondary d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="mb-1 fw-bold">Source Code (GitHub)</h5>
-                        <small class="text-secondary">Track project progress, contribute code, or open an Issue.</small>
-                    </div>
-                    <span class="badge bg-secondary rounded-pill">View Code</span>
-                </a>
-
-                <div class="list-group-item bg-dark text-light border-secondary">
-                    <div class="mb-3">
-                        <h5 class="mb-1 fw-bold">Development Team</h5>
-                        <small class="text-secondary">Built and maintained with love for technology.</small>
-                    </div>
-
-                    <ul class="list-unstyled mb-0 ms-2">
-                        <li class="mb-2">
-                            <span class="badge bg-info text-dark me-2" style="width: 85px;">Dev</span>
-                            <span class="text-light">Binh, Dai, Loc</span>
-                        </li>
-                        <li class="mb-2">
-                            <span class="badge bg-warning text-dark me-2" style="width: 85px;">Dev / Test</span>
-                            <span class="text-light">Anh</span>
-                        </li>
-                        <li>
-                            <span class="badge bg-danger text-white me-2" style="width: 85px;">Security</span>
-                            <span class="text-light">Thao</span>
-                        </li>
-                    </ul>
+                    <a href="https://discord.gg/b49baujr" target="_blank" rel="noopener noreferrer" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold">
+                        Join Now <i class="bi bi-box-arrow-up-right ms-1"></i>
+                    </a>
                 </div>
+            </div>
 
+            <!-- GitHub Card (Source Code) -->
+            <div class="contact-card github-card mb-4 p-4 rounded-4">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="card-icon bg-dark bg-opacity-50 rounded-circle p-3">
+                            <i class="bi bi-github fs-2 text-light"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-semibold text-white mb-1">Source Code (GitHub)</h3>
+                            <p class="text-muted mb-0">Track project progress, contribute code, or open an Issue.</p>
+                        </div>
+                    </div>
+                    <a href="https://github.com/LeQu0cAnh/PetWebAWSProject" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold">
+                        View Code <i class="bi bi-box-arrow-up-right ms-1"></i>
+                    </a>
+                </div>
+                <!-- Simplified GitHub Info: Only Last Update Date -->
+                <div class="github-update mt-3 pt-2">
+                    <div class="update-item">
+                        <i class="bi bi-calendar-event-fill text-info me-1"></i>
+                        <span class="small text-muted">Last update: May 2026</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Development Team Card -->
+            <div class="contact-card team-card p-4 rounded-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="card-icon bg-danger bg-opacity-25 rounded-circle p-3">
+                        <i class="bi bi-people fs-2 text-danger"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-semibold text-white mb-0">Development Team</h3>
+                        <p class="text-muted mb-0">Built and maintained with love for technology.</p>
+                    </div>
+                </div>
+                
+                <div class="team-grid mt-3">
+                    <div class="team-member d-flex align-items-center justify-content-between py-2 border-bottom border-secondary border-opacity-25">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge bg-info text-dark px-3 py-2 rounded-pill" style="min-width: 85px;">Dev</span>
+                            <span class="text-light">Binh, Dai, Loc</span>
+                        </div>
+                        <i class="bi bi-code-slash text-muted"></i>
+                    </div>
+                    <div class="team-member d-flex align-items-center justify-content-between py-2 border-bottom border-secondary border-opacity-25">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill" style="min-width: 85px;">Dev / Test</span>
+                            <span class="text-light">Anh</span>
+                        </div>
+                        <i class="bi bi-bug text-muted"></i>
+                    </div>
+                    <div class="team-member d-flex align-items-center justify-content-between py-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge bg-danger text-white px-3 py-2 rounded-pill" style="min-width: 85px;">Security</span>
+                            <span class="text-light">Thao</span>
+                        </div>
+                        <i class="bi bi-shield-lock-fill text-muted"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Contact Page Styles - Professional & Clean */
+    .contact-page {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem 3rem;
+    }
+
+    /* Header Styles */
+    .gradient-text {
+        background: linear-gradient(135deg, #0dcaf0, #0d6efd);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .divider-glow {
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #0dcaf0, #0d6efd, transparent);
+        border-radius: 3px;
+    }
+
+    /* Contact Cards Base Style */
+    .contact-card {
+        background: rgba(20, 20, 30, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .contact-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(13, 202, 240, 0.2);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Card Icon */
+    .card-icon {
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .contact-card:hover .card-icon {
+        transform: scale(1.02);
+    }
+
+    /* GitHub Update Info */
+    .github-update {
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .update-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* Team Grid */
+    .team-member {
+        transition: all 0.2s ease;
+    }
+
+    .team-member:hover {
+        padding-left: 8px;
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Button Hover Effects */
+    .btn-outline-light:hover {
+        background-color: #0dcaf0;
+        border-color: #0dcaf0;
+        color: #000;
+    }
+
+    .btn-primary:hover {
+        background-color: #0b5ed7;
+        border-color: #0b5ed7;
+        transform: scale(1.02);
+    }
+
+    /* Specific Card Styles */
+    .discord-card:hover {
+        border-color: rgba(88, 101, 242, 0.5);
+        box-shadow: 0 10px 30px rgba(88, 101, 242, 0.1);
+    }
+
+    .github-card:hover {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .team-card:hover {
+        border-color: rgba(220, 53, 69, 0.3);
+    }
+
+    /* Responsive Adjustments */
+    @@media (max-width: 768px) {
+        .contact-page {
+            padding: 1rem;
+        }
+        
+        .contact-header h1 {
+            font-size: 1.8rem;
+        }
+        
+        .contact-card {
+            padding: 1.25rem !important;
+        }
+        
+        .card-icon {
+            width: 48px;
+            height: 48px;
+        }
+        
+        .card-icon i {
+            font-size: 1.5rem !important;
+        }
+        
+        .btn-primary, .btn-outline-light {
+            width: 100%;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        
+        .d-flex.flex-wrap {
+            flex-direction: column;
+            align-items: flex-start !important;
+        }
+    }
+</style>

@@ -12,8 +12,8 @@ namespace WebPetThucTap.Models
     public class UserAccount
     {
         [Key]
-        public string Email { get; set; } // Dùng Email Google làm Khóa chính
-        public string Name { get; set; }
+        public string ? Email { get; set; } // Dùng Email Google làm Khóa chính
+        public string ? Name { get; set; }
         public UserRole Role { get; set; } = UserRole.User;
 
         // Hệ thống EXP

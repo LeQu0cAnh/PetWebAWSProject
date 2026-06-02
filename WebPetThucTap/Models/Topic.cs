@@ -7,12 +7,12 @@ namespace WebPetThucTap.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public string Title { get; set; }
+        public string ? Title { get; set; }
         [Required]
-        public string Content { get; set; }
-        public string AuthorName { get; set; }
-        public string AuthorEmail { get; set; }
-        public string? MediaUrl { get; set; }
+        public string ? Content { get; set; }
+        public string ? AuthorName { get; set; }
+        public string ? AuthorEmail { get; set; }
+        public string ? MediaUrl { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Trạng thái phê duyệt bài viết

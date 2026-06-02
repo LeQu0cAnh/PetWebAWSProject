@@ -1,5 +1,6 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,115 +11,350 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebPetThucTap.styles.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== Font ===== */
+        body {
+        font-family: 'Inter', sans-serif;
+        }
+
+        /* ===== HEADER ===== */
+        .pet-header {
+        background: #000 !important;
+        border-bottom: 1px solid #2a2a2a !important;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, .25);
+        padding: 10px 0;
+        }
+
+        /* ===== Logo ===== */
+        .pet-brand {
+        font-size: 1.15rem;
+        letter-spacing: -0.3px;
+        transition: all .2s ease;
+        }
+
+        .pet-brand:hover {
+        opacity: .92;
+        }
+
+        .pet-brand i {
+        color: #ffc107;
+        font-size: 1.2rem;
+        }
+
+        /* ===== Navigation ===== */
+        .pet-nav-link {
+        color: #ddd !important;
+        font-weight: 500;
+        border-radius: 12px;
+        padding: .65rem 1rem !important;
+        transition: all .2s ease;
+        margin-right: 6px;
+        }
+
+        .pet-nav-link:hover {
+        background: rgba(255, 255, 255, .08);
+        color: #fff !important;
+        transform: translateY(-1px);
+        }
+
+        /* ===== User Profile ===== */
+        .profile-section {
+        border-left: 1px solid rgba(255, 255, 255, .15);
+        padding-left: 16px;
+        margin-left: 10px;
+        }
+
+        .user-name {
+        font-size: .92rem;
+        font-weight: 600;
+        }
+
+        /* ===== EXP Bar ===== */
+        .progress {
+        border-radius: 999px;
+        overflow: hidden;
+        }
+
+        /* ===== Admin Button ===== */
+        .admin-btn {
+        border-radius: 999px;
+        padding: .45rem .9rem;
+        font-size: .82rem;
+        box-shadow: 0 2px 8px rgba(255, 193, 7, .18);
+        }
+
+        /* ===== Avatar ===== */
+        .avatar-img {
+        border: 2px solid rgba(255, 255, 255, .18);
+        transition: .2s ease;
+        }
+
+        .avatar-img:hover {
+        transform: scale(1.05);
+        }
+
+        /* ===== Logout Button ===== */
+        .logout-btn {
+        font-size: .65rem;
+        padding: .18rem .65rem;
+        }
+
+        /* ===== Login Button ===== */
+        .login-btn {
+        border-radius: 999px;
+        font-weight: 600;
+        transition: .2s ease;
+        }
+
+        .login-btn:hover {
+        transform: translateY(-1px);
+        }
+
+        /* ===== Navbar Alignment ===== */
+        .navbar-collapse {
+        align-items: center;
+        }
+
+        /* ===== Mobile ===== */
+        @@media (max-width: 768px) {
+
+        .pet-header {
+        padding: 12px 0;
+        }
+
+        .pet-nav-link {
+        margin-bottom: 6px;
+        margin-right: 0;
+        }
+
+        .profile-section {
+        border-left: none;
+        padding-left: 0;
+        margin-left: 0;
+        margin-top: 15px;
+        justify-content: center;
+        }
+
+        .user-name {
+        font-size: .88rem;
+        }
+        }
+    </style>
 </head>
+
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-black border-bottom border-secondary box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand text-white fw-bold" asp-area="" asp-controller="Home" asp-action="Index">WebPetThucTap</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Htu">How to use</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Information">Pet's information</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Community">Community</a>
-                        </li>
-                    </ul>
+                <header>
+                    <nav class="navbar navbar-expand-sm navbar-dark pet-header">
+                        <div class="container-fluid">
+                            <a class="navbar-brand text-white fw-bold d-flex align-items-center pet-brand" asp-area=""
+                               asp-controller="Home" asp-action="Index">
 
-                    <ul class="navbar-nav ms-auto">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item d-flex align-items-center">
-                                @{
-                                    var db = Context.Request.HttpContext.RequestServices.GetRequiredService<WebPetThucTap.Models.AppDbContext>();
-                                    var userEmail = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Email)?.Value;
-                                    var userAccount = !string.IsNullOrEmpty(userEmail) ? db.UserAccounts.Find(userEmail) : null;
+                                <i class="bi bi-heart-pulse-fill me-2"></i>
+                                PetConnect
+                            </a>
 
-                                    // Đọc link ảnh từ Google, nếu không có thì dùng ảnh mặc định
-                                    var googleAvatar = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value;
-                                    var avatarUrl = !string.IsNullOrEmpty(googleAvatar) ? googleAvatar : $"https://ui-avatars.com/api/?name={User.Identity.Name}&background=random&color=fff&rounded=true";
-                                }
+                            <!-- Mobile Toggle -->
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                    data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                    aria-expanded="false" aria-label="Toggle navigation">
 
-                                @if (userAccount != null && userAccount.Role >= WebPetThucTap.Models.UserRole.Admin)
-                                {
-                                    <a class="btn btn-sm btn-outline-warning me-4 fw-bold" asp-controller="Home" asp-action="Dashboard">
-                                        <i class="bi bi-shield-lock"></i> Quản trị
-                                    </a>
-                                }
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
 
-                                <div class="d-flex flex-column text-end me-3" style="width: 150px;">
-                                    <div class="text-light fw-bold lh-1 mb-1 text-truncate">@User.Identity.Name</div>
+                            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
 
-                                    <div class="d-flex justify-content-end align-items-center mb-1">
-                                        <small class="text-warning fw-bold" style="font-size: 0.70rem;">
-                                            👑 @(ViewData["UserTitle"] ?? "Tân binh")
-                                        </small>
-                                    </div>
-                                    <div class="d-flex justify-content-end align-items-center mb-1">
-                                        @if (ViewData["CurrentExp"] != null && ViewData["NextExp"] != null)
-                                        {
-                                            <small class="text-muted" style="font-size: 0.65rem;">
-                                                @ViewData["CurrentExp"] / @ViewData["NextExp"]
-                                            </small>
-                                        }
-                                    </div>
+                                <!-- Navigation -->
+                                <ul class="navbar-nav flex-grow-1">
 
-                                    @if (ViewData["CurrentExp"] != null && ViewData["NextExp"] != null)
+                                    <li class="nav-item">
+                                        <a class="nav-link pet-nav-link" asp-area="" asp-controller="Home"
+                                           asp-action="Htu">
+
+                                            <i class="bi bi-book me-1"></i>
+                                            How to use
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link pet-nav-link" asp-area="" asp-controller="Home"
+                                           asp-action="Information">
+
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Pet's information
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link pet-nav-link" asp-area="" asp-controller="Home"
+                                           asp-action="Community">
+
+                                            <i class="bi bi-people me-1"></i>
+                                            Community
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <!-- Right Side -->
+                                <ul class="navbar-nav ms-auto">
+
+                                    @if (User.Identity?.IsAuthenticated == true)
                                     {
-                                        <div class="progress" style="height: 5px; background-color: #333;" title="@ViewData["CurrentExp"] / @ViewData["NextExp"] EXP">
-                                            <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated"
-                                                 role="progressbar"
-                                                 style="width: @ViewData["ExpPercent"]%;">
+                                        <li class="nav-item d-flex align-items-center profile-section">
+
+                                            @{
+                                                var db = Context.Request.HttpContext.RequestServices
+                                                    .GetRequiredService<WebPetThucTap.Models.AppDbContext>();
+
+                                                var userEmail = User.Claims
+                                                    .FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Email)
+                                                    ?.Value;
+
+                                                var userAccount = !string.IsNullOrEmpty(userEmail)
+                                                    ? db.UserAccounts.Find(userEmail)
+                                                    : null;
+
+                                                var googleAvatar = User.Claims
+                                                    .FirstOrDefault(c => c.Type == "picture")
+                                                    ?.Value;
+
+                                                var avatarUrl = !string.IsNullOrEmpty(googleAvatar)
+                                                    ? googleAvatar
+                                                    :
+                                                            $"https://ui-avatars.com/api/?name={User.Identity.Name}&background=random&color=fff&rounded=true";
+                                            }
+
+                                            <!-- Admin Button -->
+                                            @if (userAccount != null &&
+                                                userAccount.Role >= WebPetThucTap.Models.UserRole.Admin)
+                                            {
+                                                <a class="btn btn-warning btn-sm fw-semibold me-3 admin-btn"
+                                                   asp-controller="Home" asp-action="Dashboard">
+
+                                                    <i class="bi bi-shield-lock-fill me-1"></i>
+                                                    Quản trị
+                                                </a>
+                                            }
+
+                                            <!-- User Information -->
+                                            <div class="d-flex flex-column text-end me-3" style="width:150px;">
+
+                                                <div class="text-light fw-semibold text-truncate user-name">
+                                                    @User.Identity.Name
+                                                </div>
+
+                                                <small class="text-warning">
+                                                    👑 @(ViewData["UserTitle"] ?? "Tân binh")
+                                                </small>
+
+                                                @if (ViewData["CurrentExp"] != null &&
+                                                     ViewData["NextExp"] != null)
+                                                {
+                                                    <small class="text-muted" style="font-size:.72rem;">
+                                                        @ViewData["CurrentExp"] /
+                                                        @ViewData["NextExp"]
+                                                    </small>
+
+                                                    <div class="progress mt-1" style="height:5px;background:#333;"
+                                                         title="@ViewData["CurrentExp"] / @ViewData["NextExp"] EXP">
+
+                                                        <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated"
+                                                             role="progressbar" style="width:@ViewData["ExpPercent"]%">
+                                                        </div>
+                                                    </div>
+                                                }
                                             </div>
-                                        </div>
+
+                                            <!-- Avatar -->
+                                            <div class="d-flex flex-column align-items-center justify-content-center">
+
+                                                <img src="@avatarUrl" alt="Avatar" width="42" height="42"
+                                                     class="rounded-circle shadow-sm mb-1 avatar-img"
+                                                     referrerpolicy="no-referrer" />
+
+                                                <a class="btn btn-outline-danger btn-sm rounded-pill logout-btn"
+                                                   asp-controller="Account" asp-action="Logout">
+
+                                                    Đăng xuất
+                                                </a>
+                                            </div>
+                                        </li>
                                     }
-                                </div>
+                                    else
+                                    {
+                                        <li class="nav-item">
+                                            <a class="btn btn-light text-dark fw-semibold rounded-pill px-4 shadow-sm"
+                                               asp-controller="Account" asp-action="LoginWithGoogle">
 
-                                <div class="d-flex flex-column align-items-center justify-content-center">
-                                    <img src="@avatarUrl"
-                                         alt="Avatar" width="34" height="34" class="rounded-circle shadow-sm mb-1" referrerPolicy="no-referrer" />
+                                                <i class="bi bi-google me-1"></i>
+                                                Đăng nhập
+                                            </a>
+                                        </li>
+                                    }
 
-                                    <a class="btn btn-outline-danger btn-sm rounded-pill" style="font-size: 0.60rem; padding: 0.15rem 0.5rem;" asp-controller="Account" asp-action="Logout">
-                                        Đăng xuất
-                                    </a>
-                                </div>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="btn btn-light text-dark fw-bold rounded-pill px-3 shadow-sm" asp-controller="Account" asp-action="LoginWithGoogle">
-                                    Đăng nhập
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </div>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </header>
+
+            </header>
+            <div class="container">
+                <main role="main" class="pb-5">
+                    @RenderBody()
+                </main>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+            <footer class="border-top border-secondary footer text-light bg-black">
+                <div class="container text-center py-4">
 
-    <footer class="border-top border-secondary footer text-light bg-black">
-        <div class="container">
-            We hope you have a pleasant experience. Please contact us using the information provided. <a asp-area="" asp-controller="Home" asp-action="Contact" class="text-info">Contact</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>
+                    <!-- Social Icons -->
+                    <div class="mb-0 lh-1">
+                        <a href="https://github.com/LeQu0cAnh/PetWebAWSProject" target="_blank" rel="noopener noreferrer"
+                           class="text-light mx-1 fs-5 text-decoration-none">
+
+                            <i class="bi bi-github"></i>
+                        </a>
+
+                        <a href="https://www.linkedin.com/in/support-webpet-6a0019413/" target="_blank"
+                           rel="noopener noreferrer" class="text-light mx-1 fs-5 text-decoration-none">
+
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+
+                        <a href="https://discord.gg/b49baujr" target="_blank" rel="noopener noreferrer"
+                           class="text-light mx-1 fs-5 text-decoration-none">
+
+                            <i class="bi bi-discord"></i>
+                        </a>
+                    </div>
+
+                    <!-- Copyright -->
+                    <div class="mb-0 lh-1">
+                        <span class="small">
+                            <i class="bi bi-c-circle"></i>
+                            2026 PetConnect
+                        </span>
+                    </div>
+
+                    <!-- Original text -->
+                    <div class="small lh-1 mt-0">
+                        We hope you have a pleasant experience.
+                        Please contact us using the information provided.
+                        <a asp-area="" asp-controller="Home" asp-action="Contact" class="text-info text-decoration-none">
+                            Contact
+                        </a>
+                    </div>
+
+                </div>
+            </footer>
+            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+            <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="~/js/site.js" asp-append-version="true"></script>
+            @await RenderSectionAsync("Scripts", required: false)
+        </body>
+
+    </html>

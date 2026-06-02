@@ -7,9 +7,9 @@ namespace WebPetThucTap.Models
         [Key]
         public int Id { get; set; }
         public int CommentId { get; set; }
-        public Comment Comment { get; set; }
+        public Comment ? Comment { get; set; }
 
-        public string OldContent { get; set; } // Nội dung cũ trước khi sửa
+        public string ? OldContent { get; set; } // Nội dung cũ trước khi sửa
         public DateTime EditedAt { get; set; } = DateTime.Now; // Thời gian sửa
     }
 }

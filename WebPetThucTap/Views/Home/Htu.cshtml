@@ -2,34 +2,226 @@
     ViewData["Title"] = "How To Use";
 }
 
-<div class="container mt-5">
-    <h2 class="text-info fw-bold border-bottom border-secondary pb-2">Pet Care Guide</h2>
-    <p class="text-light mt-3">With just 3 simple steps, you can get familiar with your new on-screen companion.</p>
+<div class="guide-page">
+    <!-- Header Section -->
+    <div class="guide-header text-center mb-5">
+        <div class="guide-badge d-inline-block mb-3">
+            <span class="badge bg-info bg-opacity-25 text-info px-3 py-2 rounded-pill">
+                <i class="bi bi-journal-bookmark-fill me-1"></i> Getting Started
+            </span>
+        </div>
+        <h1 class="display-4 fw-bold mb-3">
+            <span class="gradient-text">Pet Care Guide</span>
+        </h1>
+        <p class="lead text-muted mx-auto" style="max-width: 550px;">
+            With just 3 simple steps, you can get familiar with your new on-screen companion.
+        </p>
+        <div class="step-indicator d-flex justify-content-center gap-3 mt-4">
+            <span class="step-dot active"></span>
+            <span class="step-dot"></span>
+            <span class="step-dot"></span>
+        </div>
+    </div>
 
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card bg-dark border-secondary shadow-sm mb-3">
-                <div class="card-body">
-                    <h5 class="card-title text-warning fw-bold">1. Basic Interaction</h5>
-                    <p class="card-text text-secondary">Left-click to drag and drop your Pet anywhere on the screen. Right-click to open the quick settings menu.</p>
+    <!-- Steps Grid -->
+    <div class="steps-grid mb-5">
+        <div class="row g-4">
+            <!-- Step 1 -->
+            <div class="col-md-4">
+                <div class="step-card h-100 p-4 rounded-4 text-center">
+                    <div class="step-number mx-auto mb-3">1</div>
+                    <div class="step-icon mx-auto mb-3">
+                        <i class="bi bi-hand-index-thumb fs-1 text-warning"></i>
+                    </div>
+                    <h3 class="fw-semibold text-white mb-3">Basic Interaction</h3>
+                    <p class="text-muted mb-0">
+                        Left-click to drag and drop your Pet anywhere on the screen. 
+                        Right-click to open the quick settings menu.
+                    </p>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card bg-dark border-secondary shadow-sm mb-3">
-                <div class="card-body">
-                    <h5 class="card-title text-warning fw-bold">2. AI Chat</h5>
-                    <p class="card-text text-secondary">Double-click the Pet to open the chatbox. You can ask questions, request text summaries, or just hang out.</p>
+
+            <!-- Step 2 -->
+            <div class="col-md-4">
+                <div class="step-card h-100 p-4 rounded-4 text-center">
+                    <div class="step-number mx-auto mb-3">2</div>
+                    <div class="step-icon mx-auto mb-3">
+                        <i class="bi bi-chat-dots fs-1 text-primary"></i>
+                    </div>
+                    <h3 class="fw-semibold text-white mb-3">AI Chat</h3>
+                    <p class="text-muted mb-0">
+                        Double-click the Pet to open the chatbox. You can ask questions, 
+                        request text summaries, or just hang out.
+                    </p>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card bg-dark border-secondary shadow-sm mb-3">
-                <div class="card-body">
-                    <h5 class="card-title text-warning fw-bold">3. Health Mode</h5>
-                    <p class="card-text text-secondary">Enable "Focus Mode" in settings. Your Pet will gently nudge you to drink water and fix your posture every 45 minutes.</p>
+
+            <!-- Step 3 -->
+            <div class="col-md-4">
+                <div class="step-card h-100 p-4 rounded-4 text-center">
+                    <div class="step-number mx-auto mb-3">3</div>
+                    <div class="step-icon mx-auto mb-3">
+                        <i class="bi bi-heart-pulse fs-1 text-success"></i>
+                    </div>
+                    <h3 class="fw-semibold text-white mb-3">Health Mode</h3>
+                    <p class="text-muted mb-0">
+                        Enable "Focus Mode" in settings. Your Pet will gently nudge you 
+                        to drink water and fix your posture every 45 minutes.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Quick Tips Section (Optional enhancement, no logic change) -->
+    <div class="tips-section mt-4">
+        <div class="tip-card text-center p-4 rounded-4">
+            <i class="bi bi-lightbulb-fill text-warning fs-2 mb-2 d-block"></i>
+            <p class="text-muted mb-0">
+                💡 <strong>Pro Tip:</strong> Your Pet remembers your preferences! 
+                Customize it once and enjoy a personalized experience every time.
+            </p>
+        </div>
+    </div>
 </div>
+
+<style>
+    /* Guide Page Styles - Professional & Clean */
+    .guide-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem;
+    }
+
+    /* Header Styles */
+    .gradient-text {
+        background: linear-gradient(135deg, #0dcaf0, #0d6efd);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .guide-badge .badge {
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    /* Step Indicator Dots */
+    .step-indicator {
+        margin-top: 1rem;
+    }
+
+    .step-dot {
+        width: 8px;
+        height: 8px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .step-dot.active {
+        width: 24px;
+        background-color: #0dcaf0;
+        border-radius: 4px;
+    }
+
+    /* Step Cards */
+    .step-card {
+        background: rgba(25, 25, 35, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .step-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #0dcaf0, transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .step-card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(13, 202, 240, 0.3);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    .step-card:hover::before {
+        opacity: 1;
+    }
+
+    /* Step Number Circle */
+    .step-number {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0dcaf0, #0d6efd);
+        border-radius: 50%;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #000;
+        box-shadow: 0 4px 15px rgba(13, 202, 240, 0.3);
+    }
+
+    /* Step Icon */
+    .step-icon {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(13, 202, 240, 0.08);
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .step-card:hover .step-icon {
+        background: rgba(13, 202, 240, 0.15);
+        transform: scale(1.02);
+    }
+
+    /* Tips Section */
+    .tip-card {
+        background: linear-gradient(135deg, rgba(25, 25, 35, 0.8), rgba(13, 202, 240, 0.05));
+        border: 1px solid rgba(13, 202, 240, 0.15);
+        transition: all 0.3s ease;
+    }
+
+    .tip-card:hover {
+        border-color: rgba(13, 202, 240, 0.3);
+        background: linear-gradient(135deg, rgba(30, 30, 40, 0.9), rgba(13, 202, 240, 0.08));
+    }
+
+    /* Responsive Adjustments */
+    @@media (max-width: 768px) {
+        .guide-page {
+            padding: 1rem;
+        }
+        
+        .guide-header h1 {
+            font-size: 1.8rem;
+        }
+        
+        .step-card {
+            padding: 1.5rem !important;
+        }
+        
+        .step-icon {
+            width: 55px;
+            height: 55px;
+        }
+        
+        .step-icon i {
+            font-size: 1.5rem !important;
+        }
+    }
+</style>

@@ -7,11 +7,11 @@ namespace WebPetThucTap.Models
         [Key]
         public int Id { get; set; }
         public int TopicId { get; set; }
-        public Topic Topic { get; set; }
+        public Topic ? Topic { get; set; }
 
-        public string AuthorName { get; set; }
-        public string AuthorEmail { get; set; } // Thêm email để kiểm tra quyền chỉnh sửa
-        public string Content { get; set; }
+        public string ? AuthorName { get; set; }
+        public string ? AuthorEmail { get; set; } // Thêm email để kiểm tra quyền chỉnh sửa
+        public string ? Content { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Trạng thái chỉnh sửa

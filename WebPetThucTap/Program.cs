@@ -25,8 +25,12 @@ builder.Services.AddAuthentication(options =>
 .AddGoogle(googleOptions =>
 {
     // Lấy mã từ appsettings.json hoặc User Secrets, KHÔNG gán mã cứng ở đây
+#pragma warning disable CS8601 // Possible null reference assignment.
     googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning disable CS8601 // Possible null reference assignment.
     googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+#pragma warning restore CS8601 // Possible null reference assignment.
 
     // THÊM MỚI: Ép hệ thống bóc tách thêm dữ liệu ảnh "picture" từ Google Profile
     googleOptions.ClaimActions.MapJsonKey("picture", "picture");
