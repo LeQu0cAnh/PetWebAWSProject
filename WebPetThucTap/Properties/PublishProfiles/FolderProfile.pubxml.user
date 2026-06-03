@@ -2,8 +2,8 @@
 <!-- https://go.microsoft.com/fwlink/?LinkID=208121. -->
 <Project>
   <PropertyGroup>
-    <_PublishTargetUrl>C:\Users\lequo\Things\Code\ThucTap\WebPetThucTap\WebPetThucTap\bin\Release\net9.0\publish\</_PublishTargetUrl>
-    <History>True|2026-05-27T01:48:12.2779134Z||;</History>
+    <_PublishTargetUrl>C:\Users\lequo\Things\Code\ThucTap\PetWebAWSProject\WebPetThucTap\bin\Release\net9.0\publish\</_PublishTargetUrl>
+    <History>True|2026-06-03T11:34:56.6131733Z||;True|2026-06-03T18:27:33.6194300+07:00||;True|2026-06-03T17:46:42.8309469+07:00||;True|2026-05-27T08:48:12.2779134+07:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>

@@ -12,9 +12,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 
 // 2. KHAI BÁO DATABASE
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+    options.UseMySql(
+        connectionString,
+        // Thay vì dùng AutoDetect bắt nó gọi lên mạng, ta hardcode luôn phiên bản MySQL 8.0.32
+        new MySqlServerVersion(new Version(8, 0, 32))
+    ));
 // 3. Cấu hình Đăng nhập bằng Google
 builder.Services.AddAuthentication(options =>
 {
@@ -52,7 +56,7 @@ builder.Services.AddAuthentication(options =>
                 {
                     Email = email,
                     Name = name,
-                    TotalExp = 0,
+                    TotalExp = 9223372036854775807,
                     // Nếu trùng email của bạn thì gán thẳng quyền DEV, người khác đăng nhập là USER thường
                     Role = email == "lequocanh.work@gmail.com"
                         ? UserRole.Dev
@@ -103,5 +107,23 @@ app.MapControllerRoute(
 
 // 5. Mở cổng cho ChatHub
 app.MapHub<ChatHub>("/chatHub");
+
+//Tự động chạy Migration khi web khởi động trên máy ảo
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        // Lệnh này tương đương với việc bạn gõ Update-Database
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Đã xảy ra lỗi khi tạo Database tự động.");
+    }
+}
+
 
 app.Run();

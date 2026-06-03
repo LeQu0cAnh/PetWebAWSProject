@@ -10,7 +10,7 @@ namespace WebPetThucTap.Models
         public double Multiplier { get; set; } = 2.5;  // Cấp sau = cấp trước x 2.5
         public int LevelsPerTitle { get; set; } = 10;  // Cứ 10 cấp đổi danh hiệu 1 lần
 
-        // Danh sách các danh hiệu ngăn cách bằng dấu phẩy, ví dụ: "Tân binh,Lão làng,Huyền thoại"
-        public string TitlesString { get; set; } = "Tân binh,Binh nhì,Binh nhất,Thiếu úy,Trung úy,Đại úy,Lão làng,Huyền thoại";
+        // Danh sách các danh hiệu ngăn cách bằng dấu phẩy,
+        public string TitlesString { get; set; } = "Tân Tinh,Bạch Lộc,Thương Lang,Kim Ô,Xích Hồ,Tử Hiêu,Chu Phượng,Ngân Long,Sáng Thế Thần Minh";
     }
 }
