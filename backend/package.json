@@ -1,0 +1,47 @@
+{
+  "name": "petweb-backend",
+  "version": "1.0.0",
+  "description": "PetWeb Backend API — Desktop Pet Community Platform",
+  "main": "server-local.js",
+  "scripts": {
+    "dev": "nodemon server-local.js",
+    "start": "node server-local.js",
+    "db:migrate": "npx prisma migrate dev",
+    "db:push": "npx prisma db push",
+    "db:seed": "node prisma/seed.js",
+    "db:studio": "npx prisma studio",
+    "db:generate": "prisma generate",
+    "db:reset": "npx prisma migrate reset"
+  },
+  "keywords": [
+    "petweb",
+    "desktop-pet",
+    "community",
+    "express",
+    "prisma"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1062.0",
+    "@aws-sdk/s3-request-presigner": "^3.1062.0",
+    "@prisma/client": "^5.22.0",
+    "@vendia/serverless-express": "^4.12.6",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "jwks-rsa": "^4.0.1",
+    "morgan": "^1.11.0",
+    "prisma": "^5.22.0",
+    "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

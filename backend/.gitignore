@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Environment variables — KHÔNG bao giờ commit file này lên Git!
+.env
+.env.local
+.env.production
+
+# Prisma
+prisma/migrations/*.sql
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

@@ -1,0 +1,65 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: petweb-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: petweb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: "MYSQL_PWD=$$MYSQL_ROOT_PASSWORD mysqladmin ping -h localhost -u root"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: petweb-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      UPLOAD_LIMIT: 100M
+    ports:
+      - "8081:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  app:
+    build:
+      context: .
+      args:
+        VITE_API_URL: https://pet.locle1010.dpdns.org
+        VITE_COGNITO_REGION: ap-southeast-1
+        VITE_COGNITO_USER_POOL_ID: 
+        VITE_COGNITO_CLIENT_ID: 
+        VITE_COGNITO_DOMAIN: 
+    container_name: petweb-app
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 5713
+      DATABASE_URL: mysql://root:${MYSQL_ROOT_PASSWORD}@mysql:3306/petweb
+      COGNITO_REGION: ap-southeast-1
+      COGNITO_USER_POOL_ID: 
+      COGNITO_CLIENT_ID: 
+      FRONTEND_URL: https://pet.locle1010.dpdns.org
+      AWS_S3_BUCKET: petweb-uploads
+      AWS_S3_REGION: ap-southeast-1
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    ports:
+      - "5713:5713"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

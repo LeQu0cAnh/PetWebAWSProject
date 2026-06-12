@@ -1,0 +1,156 @@
+// This is your Prisma schema file (Prisma 5)
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// ENUM DEFINITIONS
+// ============================================================
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum UserTitle {
+  TAN_TINH    // Tân Tinh    (0–199 EXP)
+  BACH_LOC    // Bạch Lộc   (200–599 EXP)
+  THUONG_LANG // Thương Lang (600–1499 EXP)
+  KIM_O       // Kim Ô      (1500–2999 EXP)
+  XICH_HO     // Xích Hồ    (3000–5499 EXP)
+  TU_HIEU     // Tử Hiêu    (5500–8999 EXP)
+  CHU_PHUONG  // Chu Phượng (9000–13999 EXP)
+  NGAN_LONG   // Ngân Long  (14000–19999 EXP)
+  SANG_THE    // Sáng Thế Thần Minh (20000+ EXP)
+  ADMIN       // Danh hiệu cứng cho Admin
+}
+
+enum UserStatus {
+  ACTIVE
+  BANNED
+}
+
+enum PostStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ExpAction {
+  LIKE
+  COMMENT
+  POST
+}
+
+// ============================================================
+// MODELS
+// ============================================================
+
+model User {
+  id           String     @id @default(uuid())
+  cognitoSub   String     @unique @map("cognito_sub")
+  email        String     @unique
+  username     String     @unique
+  avatar       String?
+  bio          String?    @db.Text
+  role         Role       @default(USER)
+  title        UserTitle  @default(TAN_TINH)
+  totalExp     Int        @default(0) @map("total_exp")
+  status       UserStatus @default(ACTIVE)
+  banReason    String?    @db.Text @map("ban_reason")
+  banExpiresAt DateTime?  @map("ban_expires_at")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  posts        Post[]
+  comments     Comment[]
+  likes        Like[]
+  expHistories ExpHistory[]
+
+  @@map("users")
+}
+
+model Post {
+  id           String     @id @default(uuid())
+  authorId     String     @map("author_id")
+  content      String     @db.Text
+  imageUrl     String?    @map("image_url")
+  imageUrls    String?    @db.Text @map("image_urls")
+  status       PostStatus @default(PENDING)
+  likeCount    Int        @default(0) @map("like_count")
+  commentCount Int        @default(0) @map("comment_count")
+  isHidden     Boolean    @default(false) @map("is_hidden")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  author   User      @relation(fields: [authorId], references: [id])
+  comments Comment[]
+  likes    Like[]
+
+  @@index([authorId])
+  @@index([status, createdAt])
+  @@map("posts")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  postId    String   @map("post_id")
+  authorId  String   @map("author_id")
+  content   String   @db.Text
+  imageUrls String?  @db.Text @map("image_urls")
+  isHidden  Boolean  @default(false) @map("is_hidden")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id])
+
+  @@index([postId])
+  @@index([authorId])
+  @@map("comments")
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  postId    String   @map("post_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId])
+  @@index([userId])
+  @@map("likes")
+}
+
+model ExpHistory {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  action    ExpAction
+  amount    Int
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@map("exp_history")
+}
+
+// Bảng key-value cho toàn bộ cấu hình hệ thống
+model SystemConfig {
+  key         String   @id
+  value       String   @db.Text
+  description String?
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("system_configs")
+}
