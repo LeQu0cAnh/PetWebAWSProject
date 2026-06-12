@@ -1,0 +1,63 @@
+service: petweb-backend
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-southeast-1
+  stage: ${opt:stage, 'prod'}
+  
+  # Timeout & Memory
+  timeout: 30
+  memorySize: 512
+  
+  # Environment Variables — đọc từ Lambda Environment (set trên Console hoặc ở đây)
+  environment:
+    NODE_ENV: production
+    DATABASE_URL: ${env:DATABASE_URL}
+    COGNITO_REGION: ${env:COGNITO_REGION}
+    COGNITO_USER_POOL_ID: ${env:COGNITO_USER_POOL_ID}
+    COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID}
+    FRONTEND_URL: ${env:FRONTEND_URL}
+
+  # IAM Permissions (nếu cần truy cập S3, Secrets Manager)
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "*"
+
+functions:
+  api:
+    handler: lambda.handler
+    description: PetWeb Backend API Handler
+    events:
+      # HTTP API (API Gateway v2) - rẻ hơn REST API v1
+      - httpApi:
+          path: /{proxy+}
+          method: ANY
+      - httpApi:
+          path: /
+          method: ANY
+
+# Exclude không cần thiết để giảm kích thước deploy
+package:
+  patterns:
+    - '!.env'
+    - '!.env.*'
+    - '!README.md'
+    - '!**/*.test.js'
+    - '!**/__tests__/**'
+    - '!node_modules/.prisma/client/libquery_engine-*'
+    - 'node_modules/.prisma/client/libquery_engine-rhel-*'
+
+plugins:
+  - serverless-dotenv-plugin
+
+custom:
+  dotenv:
+    path: .env.production  # File env riêng cho production
