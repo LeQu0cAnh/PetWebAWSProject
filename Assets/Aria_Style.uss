@@ -1,0 +1,78 @@
+/* =========================================
+   BẢNG MÀU LÕI: NEON RED & CHERRY BLOSSOM
+========================================= */
+
+/* Khung ngoài cùng: Nền đen ám đỏ cực ngầu, viền Đỏ Neon */
+.cyber-container {
+    width: 450px;
+    height: 600px;
+    background-color: rgba(15, 0, 5, 0.85); /* Nền kính mờ hơi ám đỏ */
+    border-color: #FF0033; /* Viền Đỏ Neon */
+    border-width: 3px;
+    border-radius: 15px;
+    padding: 15px;
+    justify-content: space-between;
+}
+
+/* Tiêu đề phía trên */
+.cyber-title {
+    color: #FFB7C5; /* Chữ Hồng Hoa Anh Đào */
+    font-size: 20px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    padding-bottom: 10px;
+    border-bottom-width: 2px;
+    border-bottom-color: #FF0033; /* Vạch kẻ Đỏ Neon */
+}
+
+/* Khu vực lịch sử Chat */
+.chat-log {
+    flex-grow: 1;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Chữ hiển thị khi Aria trả lời */
+.aria-text {
+    color: #FFB7C5; /* Chữ Hồng Hoa Anh Đào */
+    font-size: 16px;
+    white-space: normal;
+}
+
+/* Khu vực Gõ phím và Nút bấm */
+.input-area {
+    flex-direction: row;
+    height: 40px;
+}
+
+.cyber-input {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+/* Ô nhập văn bản của Kỹ sư trưởng */
+.cyber-input > .unity-base-text-field__input {
+    background-color: rgba(255, 0, 51, 0.15); /* Ô chữ nền mờ Đỏ Neon */
+    border-color: #FF0033; /* Viền Đỏ Neon */
+    border-width: 1.5px;
+    border-radius: 5px;
+    color: #FFB7C5; /* Kỹ sư trưởng gõ phím sẽ ra chữ Hồng Anh Đào */
+    -unity-font-style: bold;
+}
+
+/* Nút Bấm "TRUYỀN DỮ LIỆU" */
+.cyber-btn {
+    background-color: #FF0033; /* Nền nút Đỏ Neon rực rỡ */
+    color: #FFFFFF; /* Chữ màu Trắng cho nổi bật */
+    border-radius: 5px;
+    border-width: 0;
+    -unity-font-style: bold;
+    transition-duration: 0.2s; /* Tốc độ hiệu ứng đổi màu */
+}
+
+/* Hiệu ứng ĐẢO MÀU khi rà chuột vào nút bấm (Hover) */
+.cyber-btn:hover {
+    background-color: #FFB7C5; /* Nền đổi sang Hồng Anh Đào */
+    color: #FF0033; /* Chữ đổi sang Đỏ Neon */
+    scale: 1.05; /* Nút búng to lên một chút */
+}

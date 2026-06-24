@@ -1,0 +1,18 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <Style src="Aria_Style.uss" />
+    <ui:VisualElement class="cyber-container">
+        <!-- Tiêu đề -->
+        <ui:Label text="PROJECT ARIA - HỆ THỐNG GIAO TIẾP" class="cyber-title"/>
+        
+        <!-- Màn hình Chat Log -->
+        <ui:ScrollView class="chat-log">
+            <ui:Label text="[Aria Eumi]: Hệ thống đã khởi động thành công. Kỹ sư trưởng cần hỗ trợ gì?" class="aria-text"/>
+        </ui:ScrollView>
+        
+        <!-- Ô nhập liệu và nút bấm -->
+        <ui:VisualElement class="input-area">
+            <ui:TextField name="inputChat" class="cyber-input" />
+            <ui:Button name="btnSend" text="TRUYỀN DỮ LIỆU" class="cyber-btn" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

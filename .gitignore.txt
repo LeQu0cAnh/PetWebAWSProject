@@ -1,0 +1,33 @@
+# Bỏ qua các thư mục tạm và file build của Unity
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# Bỏ qua các file cấu hình của Visual Studio / Code Editor
+.vs/
+.idea/
+.vscode/
+ExportedObj/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Bỏ qua các file crash và hệ điều hành
+sysinfo.txt
+.DS_Store
+Thumbs.db
