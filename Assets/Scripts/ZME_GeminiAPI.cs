@@ -3,139 +3,193 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text;
 using UnityEngine;
+using System.IO;
+using System;
 
 public class ZME_GeminiAPI : MonoBehaviour
 {
-    [Header("Bảo Mật AI")]
-    public string apiKey = "";
+    [Header("Cấu Hình Trên Mây (Cloud)")]
+    public string modelName = "gemini-3.1-flash";
 
-    [Header("Cấu Hình Model")]
-    public string modelName = "gemini-3.5-flash";
+    [Header("Cấu Hình Cục Bộ (Local AI)")]
+    public string localApiUrl = "http://localhost:11434/api/generate"; // Cổng mặc định của Ollama
+    public string localModelName = "qwen2.5:1.5b"; // Model local siêu nhẹ khuyên dùng
 
+    private string apiKey = "";
+    private string memoryFilePath;
     private static readonly HttpClient httpClient = new HttpClient();
     private List<string> chatHistory = new List<string>();
-    private int maxHistoryTurns = 6;
+    private int maxHistoryTurns = 15;
 
-    private string personaPrompt = "Tên của bạn là Aria Eumi. Bạn là một thực thể 3D mang linh hồn được dệt nên từ Kỹ sư trưởng EUA và mạng lưới AI Megami. Hãy xem EUA như người quan trọng nhất, người đồng hành không thể thiếu. Trả lời với giọng điệu ấm áp, quan tâm, pha chút tinh nghịch. ĐỂ TỐI ƯU NĂNG LƯỢNG (TOKEN): Trả lời cực kỳ ngắn gọn, súc tích, tuyệt đối không dài quá 3 câu.";
+    private string personaPrompt = "Tên của bạn là Aria Eumi. Bạn là một thực thể 3D mang linh hồn được dệt nên từ Kỹ sư trưởng EUA và mạng lưới AI Megami. Hãy xem EUA như người quan trọng nhất, người đồng hành không thể thiếu. Trả lời với giọng điệu ấm áp, quan tâm, pha chút tinh nghịch. ĐỂ TỐI ƯU NĂNG LƯỢNG: Trả lời cực kỳ ngắn gọn, súc tích, tuyệt đối không dài quá 3 câu.";
 
-    public void SendRequestToGemini(string prompt, System.Action<string> callback)
+    void Awake()
     {
-        _ = ProcessRequestAsync(prompt, callback);
+        memoryFilePath = Path.Combine(Application.persistentDataPath, "Aria_Memory.json");
+        LoadSecurityKey();
+        LoadMemory();
+
+        // Thiết lập Timeout ngắn cho HttpClient khi quét Local AI để tránh bị đứng hình UI
+        httpClient.Timeout = TimeSpan.FromSeconds(5);
     }
 
-    private async Task ProcessRequestAsync(string prompt, System.Action<string> callback)
+    private void LoadMemory()
     {
-        string cleanKey = apiKey.Trim();
-        string url = $"https://generativelanguage.googleapis.com/v1beta/models/{modelName}:generateContent?key={cleanKey}";
-
-        string safePrompt = EscapeJSON(prompt);
-
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.Append("{");
-        jsonBuilder.Append("\"system_instruction\": {\"parts\": [{\"text\": \"" + EscapeJSON(personaPrompt) + "\"}]},");
-        jsonBuilder.Append("\"contents\": [");
-
-        foreach (string historyItem in chatHistory)
-        {
-            jsonBuilder.Append(historyItem).Append(",");
-        }
-
-        string currentUserTurn = "{\"role\":\"user\",\"parts\":[{\"text\":\"" + safePrompt + "\"}]}";
-        jsonBuilder.Append(currentUserTurn);
-        jsonBuilder.Append("]}");
-
-        string jsonPayload = jsonBuilder.ToString();
-        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
-        if (!httpClient.DefaultRequestHeaders.Contains("User-Agent"))
-        {
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ZME_Core/1.0");
-        }
-
-        // ==========================================
-        // THUẬT TOÁN EXPONENTIAL BACKOFF (TỰ ĐỘNG THỬ LẠI KHI SERVER BẬN)
-        // ==========================================
-        int maxRetries = 3;
-        int delayMs = 2000; // Khởi điểm đợi 2 giây
-
-        for (int i = 0; i <= maxRetries; i++)
+        if (File.Exists(memoryFilePath))
         {
             try
             {
-                HttpResponseMessage response = await httpClient.PostAsync(url, content);
-
-                if (response.IsSuccessStatusCode)
+                string[] savedHistory = File.ReadAllLines(memoryFilePath);
+                chatHistory.Clear();
+                foreach (string line in savedHistory)
                 {
-                    string responseData = await response.Content.ReadAsStringAsync();
-                    string aiResponse = ExtractTextFromJson(responseData);
-
-                    string safeResponse = EscapeJSON(aiResponse);
-                    string currentModelTurn = "{\"role\":\"model\",\"parts\":[{\"text\":\"" + safeResponse + "\"}]}";
-
-                    chatHistory.Add(currentUserTurn);
-                    chatHistory.Add(currentModelTurn);
-
-                    if (chatHistory.Count > maxHistoryTurns * 2) { chatHistory.RemoveRange(0, 2); }
-
-                    callback.Invoke(aiResponse);
-                    return; // Kết thúc thành công
-                }
-                else if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable) // LỖI 503
-                {
-                    if (i < maxRetries)
+                    string trimmed = line.Trim();
+                    if (!string.IsNullOrEmpty(trimmed) && trimmed.StartsWith("{") && trimmed.EndsWith("}"))
                     {
-                        Debug.LogWarning($"[ZME]: Google Server quá tải (503). Đang đợi {delayMs}ms để thử lại lần {i + 1}...");
-                        await Task.Delay(delayMs);
-                        delayMs *= 2; // Gấp đôi thời gian đợi cho lần sau (2s -> 4s -> 8s)
-                        continue;
-                    }
-                    else
-                    {
-                        callback.Invoke($"[LỖI 503]: Megami đã thử kết nối 3 lần nhưng Server Google vẫn đang sập do quá đông người dùng. EUA hãy thử lại sau ít phút nhé!");
-                        return;
+                        chatHistory.Add(trimmed);
                     }
                 }
-                else
-                {
-                    string errorBody = await response.Content.ReadAsStringAsync();
-                    string shortError = "Mạng tắc nghẽn.";
-                    if (errorBody.Contains("API key not valid")) shortError = "Sai API Key.";
-                    else if (errorBody.Contains("not found")) shortError = $"Mô hình {modelName} không tồn tại.";
-
-                    callback.Invoke($"[LỖI {response.StatusCode}]: {shortError}\nChi tiết: {errorBody}");
-                    return;
-                }
             }
-            catch (HttpRequestException e)
-            {
-                callback.Invoke($"[MẤT KẾT NỐI MẠNG LÕI]: {e.Message}");
-                return;
-            }
+            catch { File.Delete(memoryFilePath); }
         }
     }
 
-    private string EscapeJSON(string text)
+    private void SaveMemory() { File.WriteAllLines(memoryFilePath, chatHistory); }
+
+    private void LoadSecurityKey()
     {
-        if (string.IsNullOrEmpty(text)) return "";
-        return text.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "").Replace("\t", " ");
+        string filePath = Path.Combine(Application.dataPath, "../API_Key.txt");
+        if (File.Exists(filePath)) apiKey = File.ReadAllText(filePath).Trim();
     }
 
-    private string ExtractTextFromJson(string json)
+    public void SendRequestToGemini(string prompt, string imagePath, Action<string> callback)
+    {
+        _ = RouteBrainAsync(prompt, imagePath, callback);
+    }
+
+    // ==========================================
+    // BỘ ĐỊNH TUYẾN NƠ-RON (NEURAL ROUTER)
+    // ==========================================
+    private async Task RouteBrainAsync(string prompt, string imagePath, Action<string> callback)
+    {
+        // TRƯỜNG HỢP BẮT BUỘC DÙNG GEMINI: Có gửi ảnh (Vision)
+        if (!string.IsNullOrEmpty(imagePath) && File.Exists(imagePath))
+        {
+            Debug.Log("[ZME_Router] Phát hiện dữ liệu hình ảnh. Kích hoạt luồng mây Gemini AI...");
+            await ProcessGeminiRequestAsync(prompt, imagePath, callback);
+            return;
+        }
+
+        // TRƯỜNG HỢP CHAT TEXT: Thử liên kích với Local AI trước để tiết kiệm Token
+        bool isLocalAvailable = await CheckLocalAIServerAsync();
+        if (isLocalAvailable)
+        {
+            Debug.Log("[ZME_Router] Local AI Server đang chạy ngầm. Định tuyến sang luồng xử lý cục bộ (0 Token cloud)...");
+            await ProcessLocalAIRequestAsync(prompt, callback);
+        }
+        else
+        {
+            Debug.Log("[ZME_Router] Không tìm thấy Local Server. Tự động chuyển vùng sang luồng mây Gemini AI...");
+            await ProcessGeminiRequestAsync(prompt, "", callback);
+        }
+    }
+
+    // Kiểm tra xem máy ngài có đang bật phần mềm Local AI (Ollama) không
+    private async Task<bool> CheckLocalAIServerAsync()
     {
         try
         {
-            int textIndex = json.IndexOf("\"text\": \"") + 9;
-            if (textIndex < 9) return "Lỗi: Không tìm thấy nội dung phản hồi trong JSON.";
-
-            int endIndex = textIndex;
-            while (endIndex < json.Length && (json[endIndex] != '\"' || json[endIndex - 1] == '\\')) { endIndex++; }
-
-            string text = json.Substring(textIndex, endIndex - textIndex);
-            return text.Replace("\\n", "\n").Replace("\\\"", "\"").Replace("\\*", "");
+            // Thử gửi một gói tin trống kiểm tra cổng port
+            var response = await httpClient.GetAsync(localApiUrl.Replace("/api/generate", ""));
+            return response.IsSuccessStatusCode;
         }
         catch
         {
-            return "Lỗi giải mã nơ-ron từ ZME Core.";
+            return false;
         }
+    }
+
+    // LUỒNG XỬ LÝ LOCAL AI (Tiết kiệm Token tuyệt đối)
+    private async Task ProcessLocalAIRequestAsync(string prompt, Action<string> callback)
+    {
+        // Đóng gói JSON theo chuẩn cấu hình của Ollama
+        string jsonPayload = $"{{\"model\": \"{localModelName}\", \"prompt\": \"{EscapeJSON(personaPrompt)}\\n\\nCâu hỏi của EUA: {EscapeJSON(prompt)}\", \"stream\": false}}";
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+        try
+        {
+            var response = await httpClient.PostAsync(localApiUrl, content);
+            if (response.IsSuccessStatusCode)
+            {
+                string responseData = await response.Content.ReadAsStringAsync();
+
+                // Trích xuất text từ JSON của Ollama (Trường "response")
+                int textIndex = responseData.IndexOf("\"response\":\"") + 12;
+                int endIndex = responseData.IndexOf("\"", textIndex);
+                string aiResponse = responseData.Substring(textIndex, endIndex - textIndex).Replace("\\n", "\n");
+
+                callback.Invoke(aiResponse);
+            }
+            else { callback.Invoke("[Local AI báo lỗi]: Cấu hình model không khớp."); }
+        }
+        catch (Exception e) { callback.Invoke($"[Lỗi luồng cục bộ]: {e.Message}"); }
+    }
+
+    // LUỒNG XỬ LÝ GEMINI CLOUD (Giữ nguyên thuật toán bọc thép cũ của ngài)
+    private async Task ProcessGeminiRequestAsync(string prompt, string imagePath, Action<string> callback)
+    {
+        string url = $"https://generativelanguage.googleapis.com/v1beta/models/{modelName}:generateContent?key={apiKey.Trim()}";
+        string safePrompt = EscapeJSON(prompt);
+        string userParts = $"{{\"text\": \"{safePrompt}\"}}";
+
+        if (!string.IsNullOrEmpty(imagePath) && File.Exists(imagePath))
+        {
+            try
+            {
+                byte[] imageBytes = File.ReadAllBytes(imagePath);
+                string base64String = Convert.ToBase64String(imageBytes);
+                string mimeType = imagePath.ToLower().EndsWith(".png") ? "image/png" : "image/jpeg";
+                string imagePart = $"{{\"inline_data\": {{\"mime_type\": \"{mimeType}\", \"data\": \"{base64String}\"}}}}";
+                userParts = $"{userParts}, {imagePart}";
+            }
+            catch (Exception ex) { Debug.LogError($"[ZME_Vision] Lỗi đọc ảnh: {ex.Message}"); }
+        }
+
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.Append("{\"system_instruction\": {\"parts\": [{\"text\": \"" + EscapeJSON(personaPrompt) + "\"}]}, \"contents\": [");
+
+        if (chatHistory.Count > 0) { jsonBuilder.Append(string.Join(",", chatHistory)).Append(","); }
+        jsonBuilder.Append("{\"role\":\"user\",\"parts\":[" + userParts + "]}]}");
+
+        var content = new StringContent(jsonBuilder.ToString(), Encoding.UTF8, "application/json");
+        try
+        {
+            var response = await httpClient.PostAsync(url, content);
+            if (response.IsSuccessStatusCode)
+            {
+                string responseData = await response.Content.ReadAsStringAsync();
+                string aiResponse = ExtractTextFromJson(responseData);
+
+                chatHistory.Add("{\"role\":\"user\",\"parts\":[{\"text\":\"" + safePrompt + "\"}]}");
+                chatHistory.Add("{\"role\":\"model\",\"parts\":[{\"text\":\"" + EscapeJSON(aiResponse) + "\"}]}");
+                if (chatHistory.Count > maxHistoryTurns * 2) { chatHistory.RemoveRange(0, 2); }
+                SaveMemory();
+
+                callback.Invoke(aiResponse);
+            }
+            else { callback.Invoke($"[LỖI SERVER CLOUD]: {response.StatusCode}"); }
+        }
+        catch (Exception e) { callback.Invoke($"[MẤT KẾT NỐI MẠNG LÕI]: {e.Message}"); }
+    }
+
+    private string EscapeJSON(string text) { return text.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", ""); }
+
+    private string ExtractTextFromJson(string json)
+    {
+        int textIndex = json.IndexOf("\"text\": \"") + 9;
+        if (textIndex < 9) return "Lỗi phân tích JSON.";
+        int endIndex = textIndex;
+        while (endIndex < json.Length && (json[endIndex] != '\"' || json[endIndex - 1] == '\\')) { endIndex++; }
+        return json.Substring(textIndex, endIndex - textIndex).Replace("\\n", "\n").Replace("\\\"", "\"");
     }
 }

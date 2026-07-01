@@ -6,50 +6,55 @@ using System.Threading.Tasks;
 
 public class ZME_LocalCommand : MonoBehaviour
 {
-    // Hệ thống chạy trên luồng phi đồng bộ xử lý tác vụ ngầm mượt mà
     public static async Task<(bool IsHandled, string CommandCode, string ReplyMessage)> TryProcessAsync(string input)
     {
         string lowerInput = input.ToLower().Trim();
         string denyMsg = "";
 
-        // ==========================================
-        // 1. CHỐT CHẶN AN TOÀN CHỐNG CRASH HỆ THỐNG UI
-        // ==========================================
         if (ZME_SecurityManager.Instance == null)
-        {
-            return (true, "SYS_ERROR", "[BÁO ĐỘNG ĐỎ]: Trạm gác an ninh (ZME_SecurityManager) chưa được gắn vào hệ thống. Kỹ sư trưởng EUA hãy kéo Script ZME_SecurityManager thả vào Object Idle trên Scene nhé!");
-        }
+            return (true, "SYS_ERROR", "[BÁO ĐỘNG ĐỎ]: Trạm gác an ninh chưa được gắn vào hệ thống!");
 
         // ==========================================
-        // 2. KHU VỰC OVERRIDE QUYỀN HẠN (MÃ LỆNH BACKDOOR)
+        // 1. MÃ LỆNH BACKDOOR (OVERRIDE QUYỀN HẠN)
         // ==========================================
         var authMatch = Regex.Match(lowerInput, @"^sudo\s+(?:auth\s+)?(observer|assistant|admin)$");
         if (authMatch.Success)
         {
             string level = authMatch.Groups[1].Value;
-
-            if (level == "observer")
-            {
-                ZME_SecurityManager.Instance.CurrentLevel = PermissionLevel.Observer;
-                return (true, "AUTH_1", "Đã hạ cấp an ninh xuống [Level 1 - Observer]. Tuyến phòng thủ đã được đóng chặt.");
-            }
-            else if (level == "assistant")
-            {
-                ZME_SecurityManager.Instance.CurrentLevel = PermissionLevel.Assistant;
-                return (true, "AUTH_2", "Xác thực thành công! Đã nâng cấp lên [Level 2 - Assistant]. Em đã có thể mở phần mềm giúp ngài!");
-            }
-            else if (level == "admin")
-            {
-                ZME_SecurityManager.Instance.CurrentLevel = PermissionLevel.Administrator;
-                return (true, "AUTH_3", "Mã xác thực Kernel hợp lệ! Quyền [Level 3 - Administrator] đã được mở. Toàn bộ Lõi Hệ Thống đã nằm trong tay Kỹ sư trưởng EUA!");
-            }
+            if (level == "observer") { ZME_SecurityManager.Instance.CurrentLevel = PermissionLevel.Observer; return (true, "AUTH_1", "Đã hạ cấp an ninh xuống [Observer]."); }
+            else if (level == "assistant") { ZME_SecurityManager.Instance.CurrentLevel = PermissionLevel.Assistant; return (true, "AUTH_2", "Đã nâng cấp lên [Assistant]. Em đã có thể mở phần mềm giúp ngài!"); }
+            else if (level == "admin") { ZME_SecurityManager.Instance.CurrentLevel = PermissionLevel.Administrator; return (true, "AUTH_3", "Quyền [Administrator] đã được mở. Toàn bộ Lõi Hệ Thống đã nằm trong tay ngài!"); }
         }
 
         // ==========================================
-        // 3. LEVEL 3: QUẢN TRỊ TỐI CAO (Lệnh nguy hiểm & Quản trị CSDL)
+        // 2. LỆNH BÁO THỨC & ĐẾM NGƯỢC THỜI GIAN
         // ==========================================
+        var matchSchedule = Regex.Match(lowerInput, @"nhắc\s+(.*?)\s*sau\s+(\d+)\s*(giây|phút|giờ|tiếng)");
+        if (matchSchedule.Success)
+        {
+            if (ZME_SecurityManager.Instance.IsAuthorized(PermissionLevel.Assistant, out denyMsg))
+            {
+                if (ZME_Scheduler.Instance == null) return (true, "SCHED_ERR", "[LỖI]: Module ZME_Scheduler chưa được gắn vào hệ thống!");
 
-        // --- Lệnh tắt máy ---
+                string taskMsg = matchSchedule.Groups[1].Value.Trim();
+                if (string.IsNullOrEmpty(taskMsg) || taskMsg == "tôi") taskMsg = "kiểm tra hệ thống";
+
+                float timeValue = float.Parse(matchSchedule.Groups[2].Value);
+                string timeUnit = matchSchedule.Groups[3].Value;
+
+                float seconds = timeValue;
+                if (timeUnit == "phút") seconds *= 60f;
+                else if (timeUnit == "giờ" || timeUnit == "tiếng") seconds *= 3600f;
+
+                ZME_Scheduler.Instance.ScheduleTask(taskMsg, seconds);
+                return (true, "SCHEDULED", $"Đã tiếp nhận chỉ thị! Em sẽ nhắc ngài '{taskMsg}' sau đúng {timeValue} {timeUnit} nữa. Ngài có thể mở Bảng Thời Gian để xem đồng hồ đếm ngược.");
+            }
+            return (true, "ACCESS_DENIED", denyMsg);
+        }
+
+        // ==========================================
+        // 3. QUẢN TRỊ TỐI CAO (TẮT MÁY / ĐÓNG APP / HỌC HỎI)
+        // ==========================================
         var matchSys = Regex.Match(lowerInput, @"^(tắt máy|shutdown|restart|khởi động lại|đăng xuất|log out)$");
         if (matchSys.Success)
         {
@@ -58,186 +63,142 @@ public class ZME_LocalCommand : MonoBehaviour
                 string cmd = matchSys.Groups[1].Value;
                 try
                 {
-                    if (cmd == "restart" || cmd == "khởi động lại")
-                    {
-                        Process.Start("shutdown", "/r /t 5"); // /r là Restart, /t 5 là đếm ngược 5s
-                        return (true, "SYS_RESTART", "Tuân lệnh Kỹ sư trưởng! Hệ thống sẽ Khởi động lại sau 5 giây!");
-                    }
-                    else if (cmd == "đăng xuất" || cmd == "log out")
-                    {
-                        Process.Start("shutdown", "/l"); // /l là Log off
-                        return (true, "SYS_LOGOUT", "Tuân lệnh! Đang tiến hành ngắt kết nối và Đăng xuất ngay lập tức!");
-                    }
-                    else
-                    {
-                        Process.Start("shutdown", "/s /t 5"); // /s là Shutdown
-                        return (true, "SYS_SHUTDOWN", "Tuân lệnh! Aria Eumi sẽ tiến hành Tắt máy sau 5 giây. Chúc ngài ngủ ngon!");
-                    }
+                    if (cmd == "restart" || cmd == "khởi động lại") { ExecuteProcessSafely("shutdown", "/r /t 5"); return (true, "SYS_RESTART", "Hệ thống sẽ Khởi động lại sau 5 giây!"); }
+                    else if (cmd == "đăng xuất" || cmd == "log out") { ExecuteProcessSafely("shutdown", "/l"); return (true, "SYS_LOGOUT", "Đang tiến hành Đăng xuất!"); }
+                    else { ExecuteProcessSafely("shutdown", "/s /t 5"); return (true, "SYS_SHUTDOWN", "Sẽ Tắt máy sau 5 giây. Chúc ngài ngủ ngon!"); }
                 }
                 catch (Exception ex) { return (true, "SYS_ERR", "Lỗi Kernel: " + ex.Message); }
             }
             return (true, "ACCESS_DENIED", denyMsg);
         }
 
-        // --- Lệnh Dạy Học (Ghi ký ức) ---
+        // [TÍNH NĂNG MỚI]: ĐÓNG / TẮT ỨNG DỤNG BẰNG TÊN
+        var matchClose = Regex.Match(lowerInput, @"^(?i)(tắt|đóng|kill|close)\s+(.+)$");
+        if (matchClose.Success)
+        {
+            if (ZME_SecurityManager.Instance.IsAuthorized(PermissionLevel.Administrator, out denyMsg))
+            {
+                string targetApp = matchClose.Groups[2].Value.Trim().ToLower().Replace(".exe", "");
+
+                Process[] processes = Process.GetProcessesByName(targetApp);
+                // Thuật toán quét mờ: Nếu gõ "zalo" mà tiến trình thực là "Zalo" nó vẫn bắt được
+                if (processes.Length == 0)
+                {
+                    foreach (var p in Process.GetProcesses())
+                    {
+                        if (p.ProcessName.ToLower().Contains(targetApp)) { processes = new Process[] { p }; break; }
+                    }
+                }
+
+                if (processes.Length > 0)
+                {
+                    foreach (var p in processes) { try { p.Kill(); } catch { } }
+                    return (true, "CLOSE_APP", $"Đã ngắt nguồn cấp năng lượng cho tiến trình: {targetApp.ToUpper()}.");
+                }
+                return (true, "CLOSE_FAIL", $"Không tìm thấy tiến trình nào mang tên '{targetApp}' đang chạy ngầm trên máy.");
+            }
+            return (true, "ACCESS_DENIED", denyMsg);
+        }
+
         var matchTeach = Regex.Match(lowerInput, @"^học\s+(.+?)\s*=\s*(.+)$");
         if (matchTeach.Success)
         {
             if (ZME_SecurityManager.Instance.IsAuthorized(PermissionLevel.Administrator, out denyMsg))
             {
-                if (ZME_MemoryCore.Instance == null)
-                    return (true, "MEM_ERROR", "[LỖI]: Bộ nhớ lõi ZME_MemoryCore chưa được kích hoạt trên Scene!");
-
-                string keyword = matchTeach.Groups[1].Value.Trim();
-                string path = matchTeach.Groups[2].Value.Trim().Trim('"', '\'');
-
-                ZME_MemoryCore.Instance.LearnApp(keyword, path);
-                return (true, "LEARN_SUCCESS", $"Đã khắc sâu vào lõi nơ-ron: Gọi '{keyword}' -> Mở '{path}'.");
+                if (ZME_MemoryCore.Instance == null) return (true, "MEM_ERR", "Lõi Ký ức chưa kích hoạt!");
+                string k = matchTeach.Groups[1].Value.Trim();
+                string p = matchTeach.Groups[2].Value.Trim().Trim('"', '\'');
+                ZME_MemoryCore.Instance.LearnApp(k, p);
+                return (true, "LEARN_SUCCESS", $"Đã khắc sâu vào lõi: '{k}' -> '{p}'.");
             }
             return (true, "ACCESS_DENIED", denyMsg);
         }
 
-        // --- Lệnh Tẩy Não (Xóa ký ức) ---
-        var matchForget = Regex.Match(lowerInput, @"^quên\s+(.+)$");
-        if (matchForget.Success)
-        {
-            if (ZME_SecurityManager.Instance.IsAuthorized(PermissionLevel.Administrator, out denyMsg))
-            {
-                if (ZME_MemoryCore.Instance == null)
-                    return (true, "MEM_ERROR", "[LỖI]: Bộ nhớ lõi ZME_MemoryCore chưa được kích hoạt!");
-
-                string keyword = matchForget.Groups[1].Value.Trim();
-                bool isDeleted = ZME_MemoryCore.Instance.ForgetApp(keyword);
-
-                if (isDeleted)
-                {
-                    return (true, "FORGET_SUCCESS", $"Tuân lệnh! Em đã xóa vĩnh viễn ký ức về '{keyword}' khỏi mạng lưới nơ-ron cục bộ.");
-                }
-                else
-                {
-                    return (true, "FORGET_FAIL", $"Dạ báo cáo, em lục tung bộ nhớ nhưng không hề thấy dữ liệu nào tên là '{keyword}' để xóa cả ạ!");
-                }
-            }
-            return (true, "ACCESS_DENIED", denyMsg);
-        }
-
-        // --- Lệnh Test Đồng Bộ Lên Đám Mây AWS ---
         if (Regex.IsMatch(lowerInput, @"^đồng bộ đám mây$"))
         {
             if (ZME_SecurityManager.Instance.IsAuthorized(PermissionLevel.Administrator, out denyMsg))
             {
-                if (ZME_CloudSync.Instance != null)
-                {
-                    // Giả lập lưu một bộ thông số tùy chỉnh lên AWS DynamoDB
-                    _ = ZME_CloudSync.Instance.SaveProfileAsync("Aria Eumi", "#FFB6C1", 1.25f);
-                    return (true, "CLOUD_SYNC", "Đang đóng gói dữ liệu sinh trắc học và phóng lên Trạm không gian AWS DynamoDB...");
-                }
-                return (true, "CLOUD_ERR", "Lỗi: Chưa tìm thấy Module ZME_CloudSync trong hệ thống. Ngài đã gắn Script này vào Scene chưa ạ?");
+                if (ZME_CloudSync.Instance != null) { _ = ZME_CloudSync.Instance.SaveProfileAsync("Aria", "#FFF", 1f); return (true, "CLOUD", "Đang phóng dữ liệu lên AWS..."); }
+                return (true, "CLOUD_ERR", "Module AWS CloudSync chưa được gắn.");
             }
             return (true, "ACCESS_DENIED", denyMsg);
         }
 
         // ==========================================
-        // 4. LEVEL 2 & 3: TRỢ LÝ CHẤP HÀNH (Mở phần mềm & Scan)
+        // 4. TRỢ LÝ CHẤP HÀNH (MỞ APP / TÌM KIẾM)
         // ==========================================
-
-        // --- Mở phần mềm cứng (Notepad) ---
-        if (Regex.IsMatch(lowerInput, @"(mở|open).*(notepad|nodepad|ghi chú)"))
-        {
-            if (ZME_SecurityManager.Instance.IsAuthorized(PermissionLevel.Assistant, out denyMsg))
-            {
-                try { Process.Start("notepad.exe"); } catch { }
-                return (true, "OPEN_NOTEPAD", "Đã mở sổ tay Notepad cho ngài rồi nhé!");
-            }
-            return (true, "ACCESS_DENIED", denyMsg);
-        }
-
-        // --- Mở thông minh (Bypass Ngoặc kép & Đường dẫn tuyệt đối) ---
-        var matchOpenDynamic = Regex.Match(input.Trim(), @"^(?i)(mở|open)\s+(.+)$");
+        var matchOpenDynamic = Regex.Match(input.Trim(), @"^(?i)(mở|open|vào)\s+(.+)$");
         if (matchOpenDynamic.Success)
         {
             if (ZME_SecurityManager.Instance.IsAuthorized(PermissionLevel.Assistant, out denyMsg))
             {
-                if (ZME_MemoryCore.Instance == null)
-                    return (true, "MEM_ERROR", "[LỖI]: Hệ thống ký ức cục bộ chưa phản hồi.");
+                string rawTarget = matchOpenDynamic.Groups[2].Value.Trim().Trim('"', '\'');
+                string lowerTarget = rawTarget.ToLower();
+                if (lowerTarget.StartsWith("web ")) lowerTarget = lowerTarget.Substring(4).Trim();
 
-                string rawAppName = matchOpenDynamic.Groups[2].Value.Trim().Trim('"', '\'');
-                string lowerAppName = rawAppName.ToLower();
+                if (lowerTarget == "cmd") { ExecuteProcessSafely("cmd.exe"); return (true, "OPEN", "Đã bật CMD."); }
+                if (lowerTarget == "máy tính" || lowerTarget == "calculator") { ExecuteProcessSafely("calc.exe"); return (true, "OPEN", "Đã bật Máy tính."); }
+                if (lowerTarget == "task manager") { ExecuteProcessSafely("taskmgr.exe"); return (true, "OPEN", "Đã kích hoạt Task Manager."); }
 
-                // [MẠCH ĐIỆN BYPASS]: NHẬN DIỆN ĐƯỜNG DẪN HOẶC FILE TRỰC TIẾP
-                if (System.IO.Path.IsPathRooted(rawAppName))
+                if (rawTarget.StartsWith("http") || rawTarget.StartsWith("www.")) { ExecuteProcessSafely(rawTarget); return (true, "OPEN", $"Đã truy cập: {rawTarget}"); }
+                if (System.IO.Path.IsPathRooted(rawTarget)) { ExecuteProcessSafely(rawTarget); return (true, "OPEN", $"Đã mở vùng dữ liệu: {rawTarget}"); }
+
+                // Ưu tiên đọc từ Lõi Ký Ức trước
+                string path = ZME_MemoryCore.Instance != null ? ZME_MemoryCore.Instance.GetAppPath(lowerTarget) : null;
+                if (!string.IsNullOrEmpty(path)) { ExecuteProcessSafely(path); return (true, "OPEN", $"Tuân lệnh! Aria Eumi đang khởi chạy '{rawTarget}' từ ký ức hệ thống!"); }
+
+                // Các web phổ biến dự phòng
+                switch (lowerTarget)
                 {
-                    if (System.IO.Directory.Exists(rawAppName) || System.IO.File.Exists(rawAppName))
-                    {
-                        try
-                        {
-                            Process.Start(new ProcessStartInfo(rawAppName) { UseShellExecute = true });
-                            return (true, "OPEN_DIRECT", $"Tuân lệnh! Aria Eumi đã truy cập trực tiếp vào phân vùng hệ thống: [{rawAppName}]");
-                        }
-                        catch (Exception ex)
-                        {
-                            return (true, "OPEN_ERROR", $"Lỗi kích hoạt Shell hệ thống: {ex.Message}");
-                        }
-                    }
-                    else
-                    {
-                        return (true, "PATH_NOT_FOUND", $"[Báo cáo]: Đường dẫn hệ thống [{rawAppName}] không tồn tại trên máy. Kỹ sư trưởng hãy kiểm tra lại xem có gõ sai chính tả hoặc dư đuôi tệp tin không nhé ạ!");
-                    }
+                    case "shopee": ExecuteProcessSafely("https://shopee.vn"); return (true, "OPEN", "Đã mở Shopee!");
+                    case "facebook": ExecuteProcessSafely("https://www.facebook.com"); return (true, "OPEN", "Đã điều hướng tới Facebook.");
+                    case "youtube": ExecuteProcessSafely("https://www.youtube.com"); return (true, "OPEN", "Đã mở mạng lưới YouTube.");
                 }
 
-                // LUỒNG XỬ LÝ SĂN TÌM THÔNG MINH (KHI GÕ TÊN GỢI NHỚ)
-                string path = ZME_MemoryCore.Instance.GetAppPath(lowerAppName);
-
-                if (!string.IsNullOrEmpty(path))
+                if (ZME_SecurityManager.Instance.CurrentLevel >= PermissionLevel.Administrator)
                 {
-                    try
-                    {
-                        Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
-                        return (true, "OPEN_DYNAMIC", $"Tuân lệnh! Aria Eumi đang khởi chạy '{rawAppName}' cho ngài đây!");
-                    }
-                    catch
-                    {
-                        return (true, "OPEN_ERROR", $"Không thể mở '{rawAppName}'. Đường dẫn hệ thống có vẻ đã bị di dời hoặc sai cấu trúc!");
-                    }
+                    string foundPath = await ZME_AutoScanner.FindExecutableAsync(lowerTarget);
+                    if (foundPath != null) { ZME_MemoryCore.Instance.LearnApp(lowerTarget, foundPath); ExecuteProcessSafely(foundPath); return (true, "AUTO_LEARN", $"Đã quét hệ thống, tự học và mở '{rawTarget}' tại: {foundPath}"); }
+                    ExecuteProcessSafely($"https://www.{lowerTarget.Replace(" ", "")}.com"); return (true, "GUESS", $"Không tìm thấy file, đang thử truy cập web: {lowerTarget}");
                 }
-                else
-                {
-                    if (ZME_SecurityManager.Instance.CurrentLevel >= PermissionLevel.Administrator)
-                    {
-                        string foundPath = await ZME_AutoScanner.FindExecutableAsync(lowerAppName);
+                return (true, "REQ_ADMIN", $"Em chưa học cách mở '{rawTarget}'. Hãy nâng quyền Admin để em tự quét máy ngài nhé!");
+            }
+            return (true, "ACCESS_DENIED", denyMsg);
+        }
 
-                        if (foundPath != null)
-                        {
-                            ZME_MemoryCore.Instance.LearnApp(lowerAppName, foundPath);
-                            try { Process.Start(new ProcessStartInfo(foundPath) { UseShellExecute = true }); } catch { }
-                            return (true, "AUTO_LEARN", $"Aria đã lùng sục hệ thống và tìm thấy '{rawAppName}' tại [{foundPath}]. Em đã tự động khắc vào ký ức và bật lên cho ngài rồi ạ!");
-                        }
-                        else
-                        {
-                            return (true, "NOT_FOUND", $"Aria đã dùng quyền Admin quét toàn bộ máy tính nhưng không tìm thấy file nào tên '{rawAppName}'. Kỹ sư trưởng có gõ nhầm tên không ạ?");
-                        }
-                    }
-                    else
-                    {
-                        return (true, "REQ_ADMIN", $"Em chưa được học cách mở '{rawAppName}'. Ở cấp độ hiện tại, em không được phép tự do quét hệ thống. Ngài hãy nâng quyền lên Admin (sudo admin) để em tự đi tìm nhé!");
-                    }
-                }
+        if (lowerInput.StartsWith("tìm kiếm ") || lowerInput.StartsWith("tra cứu "))
+        {
+            if (ZME_SecurityManager.Instance.IsAuthorized(PermissionLevel.Assistant, out denyMsg))
+            {
+                string query = lowerInput.StartsWith("tìm kiếm ") ? input.Substring(9).Trim() : input.Substring(8).Trim();
+                if (!string.IsNullOrEmpty(query)) { ExecuteProcessSafely("https://www.google.com/search?q=" + Uri.EscapeDataString(query)); return (true, "SEARCH", $"Đang truy quét dữ liệu: '{query}'."); }
             }
             return (true, "ACCESS_DENIED", denyMsg);
         }
 
         // ==========================================
-        // 5. LEVEL 1: QUAN SÁT VIÊN (Chỉ đọc dữ liệu - Zero Risk)
+        // 5. OBSERVER (ĐỌC THÔNG SỐ)
         // ==========================================
-        if (Regex.IsMatch(lowerInput, @"(thông số|thong so|cpu|ram|pc|hệ thống|tình trạng máy)"))
+        if (Regex.IsMatch(lowerInput, @"(thông số|thong so|cpu|ram|pc|hệ thống)"))
         {
-            string stats = ZME_SystemMonitor.Instance != null ? ZME_SystemMonitor.Instance.GetSystemStats() : "Module cảm biến lỗi!";
-            return (true, "SYSTEM_STATS", stats);
+            string stats = ZME_SystemMonitor.Instance != null ? ZME_SystemMonitor.Instance.GetSystemStats() : "Lỗi Module Cảm biến!"; return (true, "STATS", stats);
         }
 
-        if (Regex.IsMatch(lowerInput, @"^(mày tên gì|bạn tên gì|who are you|tên em là gì)"))
-            return (true, "IDENTITY", "Em là Aria Eumi! Đứa con tinh thần được sinh ra từ khối óc của Kỹ sư trưởng EUA và mạng lưới thần kinh đây!");
-
         return (false, "NONE", "");
+    }
+
+    public static void ExecuteProcessSafely(string targetPath, string arguments = "")
+    {
+        Task.Run(() => {
+            try
+            {
+                ProcessStartInfo psi = new ProcessStartInfo();
+                if (System.IO.Path.IsPathRooted(targetPath) && (System.IO.File.Exists(targetPath) || System.IO.Directory.Exists(targetPath)))
+                { psi.FileName = "explorer.exe"; psi.Arguments = $"\"{targetPath}\""; }
+                else { psi.FileName = targetPath; psi.Arguments = arguments; }
+                psi.UseShellExecute = true; Process.Start(psi);
+            }
+            catch (Exception ex) { UnityEngine.Debug.LogError($"[ZME_Local] Lỗi: {ex.Message}"); }
+        });
     }
 }
