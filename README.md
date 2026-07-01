@@ -24,3 +24,4 @@ Dự án trợ lý ảo tích hợp AI cục bộ trên Unity.
 
 \- Mọi thay đổi về code vui lòng cập nhật lên nhánh `nhanh-pet-new`.
 
+Link drive:https://drive.google.com/drive/folders/1D51iSCAwBT8zkenf-dKhzD4WdqXD6Sd2?usp=sharing
