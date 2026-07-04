@@ -1,0 +1,89 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Aria_Style.uss?fileID=7433441132597879392&amp;guid=50f033187a3d913449500144577f9b88&amp;type=3#Aria_Style" />
+
+    <ui:VisualElement name="chatContainer" style="width: 550px; height: 700px; background-color: rgba(10, 15, 25, 0.95); border-color: rgb(0, 200, 255); border-width: 1px; border-radius: 12px; position: absolute; left: 40px; top: 40px; display: none; overflow: hidden; box-shadow: 0px 0px 15px rgba(0,200,255,0.3);">
+        <ui:VisualElement name="chatHeader" style="height: 45px; background-color: rgba(0, 100, 150, 0.4); justify-content: center; padding-left: 20px; border-bottom-width: 1px; border-bottom-color: rgb(0, 200, 255); cursor: move-arrow;">
+            <ui:Label text="T.E.R.M.I.N.A.L // ARIA EUMI" style="color: rgb(0, 255, 255); -unity-font-style: bold; font-size: 14px; letter-spacing: 2px;" />
+            <ui:Button name="btnCloseChat" text="X" style="position: absolute; right: 8px; top: 8px; width: 28px; height: 28px; background-color: rgba(255, 50, 50, 0.8); color: white; border-radius: 14px; font-weight: bold; border-width: 0;" />
+        </ui:VisualElement>
+        <ui:ScrollView name="chatLog" style="flex-grow: 1; padding: 15px;" />
+        <ui:VisualElement style="flex-shrink: 0; flex-direction: row; height: 55px; padding: 8px; background-color: rgba(0, 0, 0, 0.5);">
+            <ui:Button name="btnSendImage" text="📷" style="width: 45px; flex-shrink: 0; height: 100%; background-color: rgb(40, 40, 50); color: rgb(0, 200, 255); border-radius: 8px; font-size: 18px; border-width: 1px; border-color: rgb(0, 100, 150); margin-right: 8px;" />
+            <ui:TextField name="inputChat" style="width: 0; flex-grow: 1; flex-shrink: 1; overflow: hidden; height: 100%; margin-right: 8px; font-size: 14px; color: Black;" />
+            <ui:Button name="btnSend" text="GỬI" style="width: 90px; flex-shrink: 0; height: 100%; background-color: rgb(0, 150, 200); color: white; border-radius: 8px; -unity-font-style: bold; border-width: 0;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+
+    <ui:VisualElement name="configContainer" style="width: 400px; height: 280px; background-color: rgba(15, 10, 20, 0.95); border-color: rgb(255, 50, 100); border-width: 1px; border-radius: 12px; position: absolute; left: 620px; top: 40px; display: none; padding: 20px;">
+        <ui:Label text="CẤU HÌNH LÕI HỆ THỐNG" style="color: rgb(255, 100, 150); -unity-font-style: bold; font-size: 16px; margin-bottom: 20px; -unity-text-align: middle-center;" />
+        <ui:Button name="btnCloseConfig" text="X" style="position: absolute; right: 10px; top: 10px; width: 28px; height: 28px; background-color: rgba(255, 50, 50, 0.8); color: white; border-radius: 14px; font-weight: bold; border-width: 0;" />
+        <ui:Label text="1. CẤP ĐỘ BẢO MẬT" style="color: rgb(180, 180, 200); font-size: 12px; margin-bottom: 5px;" />
+        <ui:VisualElement style="flex-direction: row; height: 35px; margin-bottom: 10px;">
+            <ui:Button name="btnSetObserver" text="Observer" style="flex-grow: 1; margin-right: 5px; background-color: rgb(40, 40, 40); color: white; border-radius: 5px;" />
+            <ui:Button name="btnSetAssistant" text="Assistant" style="flex-grow: 1; margin-right: 5px; background-color: rgb(40, 40, 40); color: white; border-radius: 5px;" />
+            <ui:Button name="btnSetAdmin" text="Admin" style="flex-grow: 1; background-color: rgb(200, 50, 50); color: white; -unity-font-style: bold; border-radius: 5px;" />
+        </ui:VisualElement>
+        <ui:Label name="txtCurrentSecurity" text="Trạng thái: Đang quét..." style="color: rgb(255, 200, 0); font-size: 12px; margin-bottom: 15px;" />
+        <ui:Label text="2. CẤU HÌNH LOCAL AI" style="color: rgb(180, 180, 200); font-size: 12px; margin-bottom: 5px;" />
+        <ui:VisualElement style="flex-direction: row; height: 35px; margin-bottom: 20px;">
+            <ui:Button name="btnLocalLow" text="Yếu (0.5B)" style="flex-grow: 1; margin-right: 5px; background-color: rgb(40,40,50); color: white; border-radius: 5px;" />
+            <ui:Button name="btnLocalMed" text="Trung (2B)" style="flex-grow: 1; margin-right: 5px; background-color: rgb(40,40,50); color: white; border-radius: 5px;" />
+            <ui:Button name="btnLocalHigh" text="Mạnh (8B)" style="flex-grow: 1; background-color: rgb(40,40,50); color: white; border-radius: 5px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+
+    <ui:VisualElement name="dictContainer" style="width: 450px; height: 500px; background-color: rgba(10, 20, 30, 0.95); border-color: rgb(0, 255, 150); border-width: 1px; border-radius: 12px; position: absolute; left: 620px; top: 100px; display: none; padding: 20px;">
+        <ui:Label text="TỪ ĐIỂN WEB &amp; ỨNG DỤNG" style="color: rgb(0, 255, 150); -unity-font-style: bold; font-size: 16px; margin-bottom: 20px; -unity-text-align: middle-center;" />
+        <ui:Button name="btnCloseDict" text="X" style="position: absolute; right: 10px; top: 10px; width: 28px; height: 28px; background-color: rgba(255, 50, 50, 0.8); color: white; border-radius: 14px; font-weight: bold; border-width: 0;" />
+        
+        <ui:Label text="Từ khóa (Ví dụ: shopee):" style="color: white; margin-bottom: 2px;" />
+        <ui:TextField name="inputMemKey" style="margin-bottom: 10px; background-color: rgba(0,0,0,0.5); color: white; border-color: rgb(0, 150, 100); border-width: 1px; border-radius: 3px;" />
+        
+        <ui:Label text="Đường dẫn URL / File path:" style="color: white; margin-bottom: 2px;" />
+        <ui:TextField name="inputMemPath" style="margin-bottom: 15px; background-color: rgba(0,0,0,0.5); color: white; border-color: rgb(0, 150, 100); border-width: 1px; border-radius: 3px;" />
+        
+        <ui:VisualElement style="flex-direction: row; height: 35px; margin-bottom: 20px;">
+            <ui:Button name="btnMemLearn" text="LƯU VÀO BỘ NHỚ" style="flex-grow: 1; margin-right: 5px; background-color: rgb(0, 150, 100); color: white; -unity-font-style: bold; border-radius: 5px;" />
+            <ui:Button name="btnMemForget" text="XÓA TỪ KHÓA" style="flex-grow: 1; background-color: rgb(200, 50, 50); color: white; -unity-font-style: bold; border-radius: 5px;" />
+        </ui:VisualElement>
+        <ui:Label text="DANH SÁCH ĐÃ LƯU TRỮ:" style="color: rgb(180, 200, 180); font-size: 12px; margin-bottom: 5px;" />
+        <ui:ScrollView name="dictList" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.6); border-radius: 8px; padding: 10px; border-width: 1px; border-color: rgb(50, 150, 100);" />
+    </ui:VisualElement>
+
+    <ui:VisualElement name="monitorContainer" style="width: 350px; height: 200px; background-color: rgba(20, 10, 10, 0.95); border-color: rgb(255, 100, 0); border-width: 1px; border-radius: 12px; position: absolute; left: 620px; top: 100px; display: none; padding: 20px; box-shadow: 0px 0px 15px rgba(255,100,0,0.3);">
+        <ui:Label text="HỆ THỐNG ĐO LƯỜNG (REAL-TIME)" style="color: rgb(255, 150, 50); -unity-font-style: bold; font-size: 14px; margin-bottom: 15px; -unity-text-align: middle-center;" />
+        <ui:Button name="btnCloseMonitor" text="X" style="position: absolute; right: 10px; top: 10px; width: 28px; height: 28px; background-color: rgba(255, 50, 50, 0.8); color: white; border-radius: 14px; font-weight: bold; border-width: 0;" />
+        
+        <ui:Label name="lblCpuUsage" text="CPU Load: Quét..." style="color: white; font-size: 14px; margin-bottom: 10px; -unity-font-style: bold;" />
+        <ui:VisualElement name="barCpuBg" style="height: 10px; background-color: rgb(50,50,50); border-radius: 5px; margin-bottom: 15px;">
+            <ui:VisualElement name="barCpuFill" style="width: 0%; height: 100%; background-color: rgb(255,100,50); border-radius: 5px;" />
+        </ui:VisualElement>
+
+        <ui:Label name="lblRamUsage" text="Free RAM: Quét..." style="color: white; font-size: 14px; margin-bottom: 10px; -unity-font-style: bold;" />
+        <ui:VisualElement name="barRamBg" style="height: 10px; background-color: rgb(50,50,50); border-radius: 5px;">
+            <ui:VisualElement name="barRamFill" style="width: 0%; height: 100%; background-color: rgb(50,200,100); border-radius: 5px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+
+    <ui:VisualElement name="scheduleContainer" style="width: 350px; height: 250px; background-color: rgba(10, 10, 25, 0.95); border-color: rgb(150, 100, 255); border-width: 1px; border-radius: 12px; position: absolute; left: 620px; top: 320px; display: none; padding: 20px; box-shadow: 0px 0px 15px rgba(150,100,255,0.3);">
+        <ui:Label text="TRẠM KIỂM SOÁT THỜI GIAN" style="color: rgb(200, 150, 255); -unity-font-style: bold; font-size: 14px; margin-bottom: 10px; -unity-text-align: middle-center;" />
+        <ui:Button name="btnCloseSchedule" text="X" style="position: absolute; right: 10px; top: 10px; width: 28px; height: 28px; background-color: rgba(255, 50, 50, 0.8); color: white; border-radius: 14px; font-weight: bold; border-width: 0;" />
+        
+        <ui:Label name="lblCurrentTime" text="00:00:00" style="color: white; font-size: 32px; -unity-font-style: bold; -unity-text-align: middle-center; margin-bottom: 5px;" />
+        <ui:Label name="lblCurrentDate" text="DD/MM/YYYY" style="color: rgb(150, 150, 200); font-size: 14px; -unity-text-align: middle-center; margin-bottom: 20px;" />
+        
+        <ui:Label text="DANH SÁCH BÁO THỨC ĐANG CHẠY:" style="color: rgb(200, 200, 200); font-size: 12px; margin-bottom: 5px;" />
+        <ui:ScrollView name="taskQueueList" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.6); border-radius: 8px; padding: 10px; border-width: 1px; border-color: rgb(100, 80, 150);" />
+    </ui:VisualElement>
+
+    <ui:VisualElement name="menuContainer" style="width: 250px; background-color: rgb(15, 15, 15); border-color: rgb(100, 100, 100); border-width: 1px; position: absolute; left: 50%; top: 50%; translate: -50% -50%; padding: 10px; border-radius: 10px; display: none;">
+        <ui:Button name="btnOpenChat" text="💬 Trò Chuyện &amp; Lệnh" style="height: 35px; margin-bottom: 8px; background-color: rgb(40, 40, 40); color: rgb(255, 255, 255); border-radius: 5px;" />
+        <ui:Button name="btnOpenDict" text="📖 Từ Điển Ghi Nhớ" style="height: 35px; margin-bottom: 8px; background-color: rgb(0, 150, 100); color: rgb(255, 255, 255); border-radius: 5px;" />
+        <ui:Button name="btnOpenConfig" text="⚙️ Cấu Hình Lõi &amp; Quyền" style="height: 35px; margin-bottom: 8px; background-color: rgb(30, 100, 150); color: rgb(255, 255, 255); border-radius: 5px;" />
+        
+        <ui:Button name="btnSystemMonitor" text="📊 Phân Tích Hệ Thống" style="height: 35px; margin-bottom: 8px; background-color: rgb(255, 100, 50); color: rgb(255, 255, 255); border-radius: 5px;" />
+        <ui:Button name="btnSchedule" text="📅 Nhắc Lịch / Báo Thức" style="height: 35px; margin-bottom: 8px; background-color: rgb(150, 100, 255); color: rgb(255, 255, 255); border-radius: 5px;" />
+        
+        <ui:Button name="btnQuit" text="❌ Ngủ Thôi" style="height: 35px; background-color: rgb(150, 30, 30); color: rgb(255, 255, 255); border-radius: 5px;" />
+    </ui:VisualElement>
+</ui:UXML>

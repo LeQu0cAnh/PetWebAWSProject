@@ -1,0 +1,31 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.2",
+    "vite": "^8.0.12"
+  },
+  "dependencies": {
+    "@aws-amplify/ui-react": "^6.15.4",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@tailwindcss/vite": "^4.3.0",
+    "@vitejs/plugin-react": "^6.0.2",
+    "aws-amplify": "^6.17.0",
+    "axios": "^1.17.0",
+    "date-fns": "^4.4.0",
+    "lucide-react": "^1.17.0",
+    "react-hot-toast": "^2.6.0",
+    "react-intersection-observer": "^10.0.3",
+    "react-router-dom": "^7.17.0",
+    "tailwindcss": "^4.3.0",
+    "three": "^0.184.0"
+  }
+}

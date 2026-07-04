@@ -1,0 +1,14 @@
+# Thư viện Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Các file môi trường nhạy cảm (Cần bảo mật, KHÔNG up lên Git)
+.env
+.env.development
+.env.test
+.env.production
+
+# Serverless build output
+.serverless/
