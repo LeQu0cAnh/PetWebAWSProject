@@ -1,0 +1,39 @@
+# Thư mục tạm thời và cache của Unity (Rất nặng, không up lên Git)
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]serSettings/
+
+# Thư mục cấu hình của Visual Studio / JetBrains Rider
+.vs/
+.idea/
+*.sln
+*.csproj
+*.csproj.user
+*.unityproj
+*.suo
+*.userprefs
+*.user
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Android build/metadata
+local.properties
+/[Aa]sset[Store]Store*
+
+# Addressables & StreamingAssets build artifacts
+Assets/AddressableAssetsData/*/*.json
+Assets/StreamingAssets/aa/*
+
+# Large AI Model files (GGUF)
+*.gguf
+*.gguf.meta
+

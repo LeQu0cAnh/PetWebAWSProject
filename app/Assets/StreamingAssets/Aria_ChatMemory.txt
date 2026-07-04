@@ -1,0 +1,12 @@
+<|im_start|>user
+1 + 1 bằng mấy ?<|im_end|>
+
+<|im_start|>assistant
+1 + 1 bằng 2.<|im_end|>
+
+<|im_start|>user
+mình là Eua rất vui được gặp<|im_end|>
+
+<|im_start|>assistant
+Xin chào Eua, rất vui được gặp bạn! Đừng ngần ngại cho em biết bạn cần hỗ trợ về điều gì nhé.<|im_end|>
+
